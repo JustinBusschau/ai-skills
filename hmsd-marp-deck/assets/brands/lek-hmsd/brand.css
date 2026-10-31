@@ -1,0 +1,27 @@
+/* brand-id: lek-hmsd
+   name: L.E.K. and Hi Mum Said Dad co-brand
+   description: LEK green, with the Hi and LEK logos side by side
+   meta-line: L.E.K. Consulting and Hi Mum Said Dad */
+:root {
+  --font: Arial, Helvetica, sans-serif;
+  --paper: #ffffff;
+  --ink: #4a4a4a;
+  --ink-strong: #3d3d3d;
+  --muted: #666666;
+  --heading: #076B3B;
+  --primary: #076B3B;
+  --on-primary: #ffffff;
+  --on-primary-muted: #e2efe7;
+  --accent: #B9E4C9;
+  --tint: #DCEBE2;
+  --tint-ink: #444444;
+  --rule: #D9D8DE;
+  --zebra: #F5F7F8;
+  --title-rule: #D9D8DE;
+  --title-rule-width: 1.5px;
+  --neutral-head: #8a8a90;
+  --logo: url('brand/lek-hmsd/logo.svg');
+  --logo-on-dark: url('brand/lek-hmsd/logo-on-dark.svg');
+  --logo-width: 112px;
+  --footer-label: "Confidential";
+}

@@ -1,0 +1,42 @@
+{
+  "name": "__PROJECT_NAME__",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Stateful mock server for __API_TITLE__. Generated from spec/openapi.yaml.",
+  "type": "module",
+  "engines": {
+    "node": "^22.13.0 || ^24.0.0 || >=26.0.0"
+  },
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "tsx src/server.ts",
+    "bundle:spec": "tsx scripts/bundle-spec.ts",
+    "check:spec": "tsx scripts/check-spec.ts",
+    "typecheck": "tsc --noEmit",
+    "gen:types": "openapi-typescript spec/openapi.yaml -o src/generated/api-types.ts",
+    "coverage:scenarios": "tsx scripts/scenario-coverage.ts",
+    "docs:scenarios": "tsx scripts/scenario-docs.ts",
+    "test": "vitest run",
+    "verify": "npm run check:spec && npm run gen:types && npm run typecheck && npm run coverage:scenarios && npm test && npm run docs:scenarios",
+    "check:docs-cdn": "tsx scripts/check-docs-cdn.ts"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^10.6.0",
+    "@fastify/cors": "^11.3.1",
+    "@readme/openapi-parser": "^9.1.0",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "busboy": "^1.6.0",
+    "fastify": "^5.12.7",
+    "openapi-sampler": "^1.7.8",
+    "tsx": "^4.23.15",
+    "yaml": "^2.9.1"
+  },
+  "devDependencies": {
+    "@types/busboy": "^1.5.4",
+    "@types/node": "^22.0.0",
+    "openapi-typescript": "^7.13.0",
+    "typescript": "^5.9.0",
+    "vitest": "^5.0.5"
+  }
+}

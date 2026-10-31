@@ -1,0 +1,19 @@
+{
+  "theme": "base",
+  "themeVariables": {
+    "fontFamily": "Menlo, Consolas, 'DejaVu Sans Mono', monospace",
+    "fontSize": "13px",
+    "background": "#ffffff",
+    "primaryColor": "#ffffff",
+    "primaryTextColor": "#222222",
+    "primaryBorderColor": "#333333",
+    "lineColor": "#222222",
+    "secondaryColor": "#ffffff",
+    "tertiaryColor": "#ffffff",
+    "clusterBkg": "#fafafa",
+    "clusterBorder": "#cccccc",
+    "edgeLabelBackground": "#e8e8e8",
+    "textColor": "#222222"
+  },
+  "flowchart": { "curve": "linear", "padding": 12, "htmlLabels": true }
+}

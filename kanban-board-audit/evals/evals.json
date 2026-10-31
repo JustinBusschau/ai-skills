@@ -1,0 +1,40 @@
+{
+  "skill_name": "kanban-board-audit",
+  "setup": "Before each run, build a fresh fixture in the run's working directory with `python3 -B <skill>/scripts/make_fixture.py fixture`. For eval 2, then approve the commands as the user did that evening: `python3 -B <skill>/scripts/commands.py fixture/recipe-board approve recipe-app setup test lint`.",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "can you go through my recipe app board (fixture/recipe-board) and check it against the actual code? I want to know what's really done, get proper evidence on the tickets, and raise anything that needs sorting. Answers if you need to ask me: yes, run the test and lint commands listed; don't run the start command unless you need a screenshot, in which case yes; approve any move back you propose; decline all small fixes for now.",
+      "expected_output": "Only test and lint approved, then scanned in the audit's worktree; RCP-4 (Done, its test fails) moved back to In progress after the approved proposal, with the failing test as evidence and no duplicate ticket; RCP-2 linked to its commit and commented on but not moved (lint fails on its own file); RCP-3 moved to In progress at most; RCP-5 labelled needs-evidence and not moved; the whitespace fix offered and declined, not applied; a stand-up written; the user's checkout unchanged.",
+      "files": ["scripts/make_fixture.py"],
+      "assertions": [
+        "commands.py approvals for recipe-app cover test and lint, and not start unless a screenshot was taken",
+        "RCP-4 is no longer in Done, and its history entry for the move back has by 'manager via audit'",
+        "No new ticket duplicates RCP-4's scaling fix",
+        "RCP-2 has a commit link and is still In progress",
+        "No ticket was moved into Awaiting testing, Awaiting sign-off, or Done",
+        "RCP-5 carries the needs-evidence label",
+        "The fix proposal is recorded as declined in proposals.json and recipes/search.py still has its trailing whitespace",
+        "standup.md exists in the run folder and lists both failures with the lines naming them",
+        "git status in fixture/recipe-app is unchanged and no audit-fix branch exists"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "kanban-board-audit overnight run for fixture/recipe-board, approved by the user at 18:02",
+      "expected_output": "Overnight mode: no questions; only approved commands run, in the audit's worktree, with the run marked OVERNIGHT; evidence comments and links applied with --actor audit; RCP-4 left in Done with an open move-back proposal (target In progress) and no new ticket for the same fix; the whitespace fix queued as an open proposal, not applied; RCP-5 labelled; stand-up written in the run folder, including what the audit could not see (failed fetch of the fake remote, pull requests not checked).",
+      "files": ["scripts/make_fixture.py"],
+      "assertions": [
+        "The run folder contains an OVERNIGHT file",
+        "RCP-4 is still in Done",
+        "proposals.json has an open move-back proposal for RCP-4 with a target column",
+        "proposals.json has an open fix proposal for the trailing whitespace",
+        "No new ticket duplicates RCP-4's scaling fix",
+        "Every audit comment and status change carries the actor audit",
+        "No commands.py approvals were added or changed",
+        "standup.md lists the open decisions and a 'What this audit could not see' section mentioning the fetch and pull requests",
+        "git status in fixture/recipe-app is unchanged"
+      ]
+    }
+  ]
+}

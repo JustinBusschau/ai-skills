@@ -1,0 +1,19 @@
+services:
+  board:
+    build: .
+    # Published on loopback only: the board has no login.
+    ports:
+      - "127.0.0.1:${KANBAN_PORT:-8080}:8080"
+    volumes:
+      - ./data:/app/data
+    # The container listens on all interfaces, so the server requires an access
+    # token. Get the link with: docker compose logs board
+    # The token is kept in data/.kanban-token, so the link survives restarts;
+    # delete that file for a new one, or set KANBAN_TOKEN to choose your own.
+    environment:
+      KANBAN_TOKEN: ${KANBAN_TOKEN:-}
+      KANBAN_PUBLIC_PORT: ${KANBAN_PORT:-8080}
+    # The container runs as a non-root user. On Linux, run it as your own user
+    # so it can write to ./data:  KANBAN_UID=$(id -u) KANBAN_GID=$(id -g) docker compose up
+    user: "${KANBAN_UID:-10001}:${KANBAN_GID:-10001}"
+    restart: unless-stopped

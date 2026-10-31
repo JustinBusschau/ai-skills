@@ -1,0 +1,23 @@
+{
+  "skill_name": "project-kanban-board",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "can you set me up a board to plan our family trip to Edinburgh over Feb half term? 4 days, 2 adults 2 kids (7 and 10), budget about £2k, travelling from Bristol. nothing booked yet except my wife has asked her sister if we can borrow her car seat",
+      "expected_output": "A small, flat or lightly grouped board (simple preset, no sub-task sprawl) covering travel, accommodation, activities, and money, with the car seat item in a waiting state with its reason, assumptions recorded, verified by the smoke test.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Here's the arc42 doc for LockerLink (files/parcel-locker-arc42.md). I'm running delivery for the pilot. Build me a kanban board I can use to manage the build through to go-live.",
+      "expected_output": "A delivery-tier board with epics per building block plus infrastructure, security, and testing; quality scenarios as NFR tasks; ADR-003 waiting on LockTech; team members as people; go-live date respected; testing and sign-off columns; swimlanes by epic; smoke test passing.",
+      "files": ["files/parcel-locker-arc42.md"]
+    },
+    {
+      "id": 3,
+      "prompt": "I need to plan and manage a team through a complex technical build and delivery of a micro-service, event-driven, resilient, scaleable, secure system for a pet insurance company, including mobile apps for Android and iOS, a customer web portal, a vet partner portal, BI dashboards, and management and consumer dashboards. Team is Aisha (backend lead), Tom (mobile), Mei (web), Raj (data and BI), Lena (QA) and me (delivery lead, Chris). Go-live target is 30 June 2027. Create the board for me.",
+      "expected_output": "A delivery-tier board with epics for each deliverable and cross-cutting concern, three levels used where justified, people assigned by role, colour-coded epics, swimlanes by epic, no invented progress, go-live date used only as given, smoke test passing.",
+      "files": []
+    }
+  ]
+}

@@ -1,0 +1,207 @@
+openapi: 3.1.0
+info:
+  title: Acme Wallet API
+  version: 1.0.0
+servers:
+  - url: https://api.acme.example/v1
+security:
+  - bearerAuth: []
+paths:
+  /auth/sign-up:
+    post:
+      operationId: signUp
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Credentials' }
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Session' }
+        '400': { $ref: '#/components/responses/Error' }
+        '409': { $ref: '#/components/responses/Error' }
+  /auth/sign-in:
+    post:
+      operationId: signIn
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Credentials' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Session' }
+        '400': { $ref: '#/components/responses/Error' }
+        '401': { $ref: '#/components/responses/Error' }
+        '423': { $ref: '#/components/responses/Error' }
+  /me:
+    get:
+      operationId: getMe
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/User' }
+        '401': { $ref: '#/components/responses/Error' }
+  /kyc/applications:
+    post:
+      operationId: submitKyc
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [firstName, lastName, dateOfBirth]
+              properties:
+                firstName: { type: string, minLength: 1 }
+                lastName: { type: string, minLength: 1 }
+                dateOfBirth: { type: string, format: date }
+      responses:
+        '202':
+          description: Accepted for review
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/KycApplication' }
+        '400': { $ref: '#/components/responses/Error' }
+        '401': { $ref: '#/components/responses/Error' }
+        '409': { $ref: '#/components/responses/Error' }
+  /kyc/applications/current:
+    get:
+      operationId: getCurrentKyc
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/KycApplication' }
+        '401': { $ref: '#/components/responses/Error' }
+        '404': { $ref: '#/components/responses/Error' }
+  /payments:
+    get:
+      operationId: listPayments
+      parameters:
+        - { name: cursor, in: query, schema: { type: string } }
+        - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 50, default: 20 } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, nextCursor]
+                properties:
+                  data: { type: array, items: { $ref: '#/components/schemas/Payment' } }
+                  nextCursor: { type: [string, 'null'] }
+        '400': { $ref: '#/components/responses/Error' }
+        '401': { $ref: '#/components/responses/Error' }
+    post:
+      operationId: createPayment
+      parameters:
+        - { name: Idempotency-Key, in: header, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [amount, currency, cardToken]
+              properties:
+                amount: { type: integer, minimum: 1 }
+                currency: { type: string, enum: [GBP, EUR] }
+                cardToken: { type: string }
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Payment' }
+        '400': { $ref: '#/components/responses/Error' }
+        '401': { $ref: '#/components/responses/Error' }
+        '402': { $ref: '#/components/responses/Error' }
+        '403': { $ref: '#/components/responses/Error' }
+        '429': { $ref: '#/components/responses/Error' }
+webhooks:
+  payment.updated:
+    post:
+      summary: Sent when a pending payment settles.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [type, data]
+              properties:
+                type: { const: payment.updated }
+                data: { $ref: '#/components/schemas/Payment' }
+      responses:
+        '204': { description: Acknowledged }
+components:
+  securitySchemes:
+    bearerAuth: { type: http, scheme: bearer }
+  responses:
+    Error:
+      description: Error
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+          example: { error: { code: conflict, message: Already exists } }
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code: { type: string }
+            message: { type: string }
+            details: {}
+    Credentials:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, minLength: 8 }
+    Session:
+      type: object
+      required: [accessToken, user]
+      properties:
+        accessToken: { type: string }
+        user: { $ref: '#/components/schemas/User' }
+    User:
+      type: object
+      required: [id, email, status]
+      properties:
+        id: { type: string }
+        email: { type: string }
+        status: { type: string, enum: [onboarding, active, suspended] }
+    KycApplication:
+      type: object
+      required: [id, status, submittedAt]
+      properties:
+        id: { type: string }
+        status: { type: string, enum: [pending, approved, rejected, needs_more_info] }
+        submittedAt: { type: string, format: date-time }
+        decidedAt: { type: [string, 'null'], format: date-time }
+    Payment:
+      type: object
+      required: [id, amount, currency, status, createdAt]
+      properties:
+        id: { type: string }
+        amount: { type: integer }
+        currency: { type: string, enum: [GBP, EUR] }
+        status: { type: string, enum: [succeeded, declined, pending] }
+        createdAt: { type: string, format: date-time }

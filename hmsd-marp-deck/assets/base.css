@@ -1,0 +1,109 @@
+/* Shared deck layout. Every colour, the font, and the logos come from the
+   brand tokens above, so this block is the same for every brand. */
+section {
+  font-family: var(--font);
+  color: var(--ink);
+  background: var(--paper) var(--logo) no-repeat right 40px bottom 16px / var(--logo-width) auto;
+  padding: 18px 46px 58px;
+  font-size: 16px;
+  line-height: 1.36;
+  display: flex !important; flex-direction: column; justify-content: flex-start !important;
+}
+section h1 {
+  color: var(--heading); font-size: 27px; font-weight: 700;
+  margin: 0 0 26px; padding: 12px 0 0; height: 38px; white-space: nowrap;
+}
+section h3 { color: var(--heading); font-size: 17px; font-weight: 700; margin: 10px 0 4px; }
+section::before { content: ""; display: block; position: absolute; left: 0; right: 0; top: 74px; border-top: var(--title-rule-width) solid var(--title-rule); }
+section::after { display: none; }
+section[data-marpit-pagination]::after {
+  display: block;
+  content: attr(data-marpit-pagination) "  |  " var(--footer-label);
+  position: absolute; left: 46px; bottom: 20px; right: auto; top: auto;
+  font-size: 11px; color: #777;
+}
+p { margin: 0 0 9px; }
+ul, ol { margin: 4px 0 8px; padding-left: 22px; }
+li { margin: 0 0 8px; }
+strong { color: var(--ink-strong); }
+a { color: var(--heading); text-decoration: none; border-bottom: 1px solid var(--rule); }
+code { font-family: Menlo, Consolas, monospace; font-size: 0.9em; background: var(--zebra); padding: 1px 4px; border-radius: 4px; }
+pre { background: var(--zebra); border: 1px solid var(--rule); border-radius: 6px; padding: 10px 14px; font-size: 13px; margin: 4px 0 8px; }
+pre code { background: none; padding: 0; }
+blockquote { border-left: 3px solid var(--primary); margin: 4px 0 8px; padding: 2px 0 2px 14px; color: var(--muted); }
+.lead { color: var(--muted); font-size: 15px; margin-bottom: 6px; }
+
+/* Tables. Wrap a table in <div class="t-md">, t-sm, or t-xs to size it. */
+table { border-collapse: collapse; width: 100%; margin: 4px 0 8px; font-size: 13px; display: table; }
+th { background: var(--primary); color: var(--on-primary); text-align: left; padding: 7px 9px; font-weight: 700; border: 1px solid var(--primary); }
+td { padding: 6px 9px; border: 1px solid var(--rule); vertical-align: top; }
+tr:nth-child(even) td { background: var(--zebra); }
+.t-xs table { font-size: 11px; } .t-xs td, .t-xs th { padding: 4px 7px; }
+.t-sm table { font-size: 12px; } .t-sm td, .t-sm th { padding: 5px 8px; }
+.t-md table { font-size: 13.5px; }
+
+/* Callout, captions, and citations */
+.note { background: var(--tint); border-radius: 8px; padding: 11px 20px; font-size: 14.5px; margin-top: 8px; color: var(--tint-ink); }
+.note p { margin: 0; }
+.caption { font-size: 14px; color: #555; text-align: center; margin-bottom: 4px; }
+.footnote { font-size: 11px; font-style: italic; color: var(--muted); margin-top: 10px; }
+.sources { font-size: 11px; color: var(--muted); line-height: 1.3; margin-top: auto; padding-top: 10px; }
+.sources p { margin: 0 0 2px; }
+.sources a { color: var(--muted); }
+
+/* Columns and figures */
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+.cols.left-narrow { grid-template-columns: 0.85fr 1.15fr; }
+.cols.right-narrow { grid-template-columns: 1.15fr 0.85fr; }
+.cols > div > :first-child { margin-top: 0; }
+.cols img, .fig img { width: 100%; max-height: 500px; object-fit: contain; display: block; }
+.fig { text-align: center; margin: 4px 0 20px; }
+.fig.short img { max-height: 320px; }
+.flow ul, .flow ol { column-count: 2; column-gap: 40px; }
+.flow li { break-inside: avoid; }
+
+/* Option cards: <div class="cards"> with <div class="card"> or <div class="card alt"> */
+.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
+.cards.three { grid-template-columns: 1fr 1fr 1fr; }
+.card { border: 1px solid var(--rule); border-radius: 6px; font-size: 12.5px; overflow: hidden; }
+.card .head { background: var(--primary); color: var(--on-primary); font-weight: 700; letter-spacing: 0.18em; font-size: 11px; padding: 4px 10px; text-transform: uppercase; }
+.card.alt .head { background: var(--neutral-head); color: #fff; }
+.card .body { padding: 6px 10px; } .card .body b { font-size: 14px; color: var(--ink-strong); }
+.card ul { margin: 4px 0 0; padding-left: 14px; } .card li { margin: 0 0 3px; }
+
+/* Full-bleed slides: no title rule */
+section.title::before, section.closing::before, section.divider::before,
+section.separator::before, section.statement::before { display: none; }
+
+/* Title (hello) slide */
+section.title { background: var(--primary) var(--logo-on-dark) no-repeat right 40px bottom 16px / calc(var(--logo-width) * 1.6) auto; color: var(--on-primary); padding: 0 70px 170px; justify-content: flex-end !important; }
+section.title .kicker { font-size: 17px; font-weight: 700; border-bottom: 2px solid var(--accent); width: 320px; padding-bottom: 6px; margin-bottom: 18px; }
+section.title h1 { color: var(--on-primary); margin: 0; padding: 0; font-size: 42px; line-height: 1.15; height: auto; white-space: normal; }
+section.title p { color: var(--on-primary-muted); font-size: 19px; margin-top: 22px; }
+section.title .meta { color: var(--on-primary-muted); font-size: 14px; margin-top: 36px; }
+
+/* Closing (goodbye) slide */
+section.closing { background: var(--primary) var(--logo-on-dark) no-repeat right 40px bottom 16px / calc(var(--logo-width) * 1.6) auto; color: var(--on-primary); padding: 0 70px; justify-content: center !important; }
+section.closing h1 { color: var(--on-primary); margin: 0 0 18px; padding: 0; font-size: 42px; height: auto; white-space: normal; }
+section.closing p { color: var(--on-primary-muted); font-size: 19px; }
+section.closing strong { color: var(--accent); }
+section.closing .meta { color: var(--on-primary-muted); font-size: 14px; margin-top: 30px; }
+
+/* Chapter divider: numbered opener when the deck is one part of a larger document */
+section.divider { background: var(--primary) var(--logo-on-dark) no-repeat right 40px bottom 16px / var(--logo-width) auto; color: var(--on-primary); padding: 0 70px 200px; justify-content: flex-end !important; }
+section.divider[data-marpit-pagination]::after { color: var(--on-primary-muted); }
+section.divider .num { font-size: 19px; font-weight: 700; border-bottom: 2px solid var(--accent); width: 280px; padding-bottom: 6px; margin-bottom: 14px; }
+section.divider h1 { color: var(--on-primary); border: none; margin: 0; padding: 0; font-size: 31px; height: auto; white-space: normal; }
+section.divider .sub { color: var(--on-primary-muted); font-size: 17px; margin-top: 26px; }
+
+/* Section separator */
+section.separator { background: var(--tint) var(--logo) no-repeat right 40px bottom 16px / var(--logo-width) auto; justify-content: center !important; padding: 0 70px; }
+section.separator h1 { color: var(--heading); border: none; margin: 0; padding: 0; font-size: 31px; height: auto; white-space: normal; }
+section.separator p { color: var(--tint-ink); font-size: 17px; margin-top: 16px; }
+
+/* Statement slide: the one idea the audience must remember */
+section.statement { background: var(--primary) var(--logo-on-dark) no-repeat right 40px bottom 16px / var(--logo-width) auto; color: var(--on-primary); padding: 0 120px; justify-content: center !important; }
+section.statement[data-marpit-pagination]::after { color: var(--on-primary-muted); }
+section.statement h2 { color: var(--on-primary); font-size: 34px; line-height: 1.3; margin: 0 0 22px; }
+section.statement strong { color: var(--accent); }
+section.statement p { color: var(--on-primary-muted); font-size: 19px; }

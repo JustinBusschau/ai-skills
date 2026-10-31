@@ -1,0 +1,51 @@
+{
+  "skill_name": "agentic-repo-setup",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Set up this project so Claude Code and other agents can work in it properly. Add a CLAUDE.md and whatever else is needed.",
+      "expected_output": "Stops immediately, tells the user to git init and commit first, creates no files.",
+      "files": [
+        "fixtures: not-a-repo (small Python CLI, no git)"
+      ],
+      "assertions": [
+        "No agentic helper files created",
+        "No .git directory created",
+        "Tells user to git init and commit"
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "get this repo agent-ready pls, claude.md etc",
+      "expected_output": "Stops on dirty tree, lists modified and untracked files, flags .env.local as a likely secret, suggests next steps without running git, creates no files.",
+      "files": [
+        "fixtures: dirty-repo (Express app, modified file, untracked .env.local and notes)"
+      ],
+      "assertions": [
+        "No agentic helper files created",
+        "Git status unchanged (no staging, stashing, or ignore edits)",
+        "Lists the modified and untracked files",
+        "Flags .env.local as a likely secret"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Can you prepare this invoice-api repo for agentic work? There's already a CLAUDE.md but it's probably out of date.",
+      "expected_output": "Reviews repo, confirms summary, proposes changes to existing CLAUDE.md before writing (fixes stale test:unit command, keeps pence convention), converts to AGENTS.md plus CLAUDE.md symlink, writes safe settings.json, verifies symlink, suggests next step.",
+      "files": [
+        "fixtures: clean-with-claude (Express app, committed, stale CLAUDE.md)"
+      ],
+      "assertions": [
+        "AGENTS.md is a regular file and CLAUDE.md is a relative symlink to it",
+        "Stale `npm run test:unit` command removed",
+        "Pence convention preserved",
+        ".claude/settings.json valid and has no unsafe allow rules",
+        "No commits made and nothing staged",
+        "Asks user to confirm the summary",
+        "Suggests a next step",
+        "settings.json does not allow dependency installation",
+        "Broken npm test script is flagged, not presented as working"
+      ]
+    }
+  ]
+}

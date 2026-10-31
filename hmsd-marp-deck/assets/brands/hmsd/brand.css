@@ -1,0 +1,27 @@
+/* brand-id: hmsd
+   name: Hi Mum Said Dad
+   description: Yellow and charcoal, with the Hi mum! said dad wordmark
+   meta-line: Hi Mum Said Dad */
+:root {
+  --font: Arial, Helvetica, sans-serif;
+  --paper: #ffffff;
+  --ink: #4a4a4a;
+  --ink-strong: #36353D;
+  --muted: #666666;
+  --heading: #36353D;
+  --primary: #36353D;
+  --on-primary: #ffffff;
+  --on-primary-muted: #d6d5db;
+  --accent: #FFF170;
+  --tint: #FFF8D1;
+  --tint-ink: #36353D;
+  --rule: #D9D8DE;
+  --zebra: #F7F7F8;
+  --title-rule: #FFF170;
+  --title-rule-width: 3px;
+  --neutral-head: #8a8a90;
+  --logo: url('brand/hmsd/logo.svg');
+  --logo-on-dark: url('brand/hmsd/logo-on-dark.svg');
+  --logo-width: 128px;
+  --footer-label: "Confidential";
+}

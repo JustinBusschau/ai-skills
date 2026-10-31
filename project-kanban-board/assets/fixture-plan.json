@@ -1,0 +1,17 @@
+{
+  "title": "Office summer party",
+  "keyPrefix": "PARTY",
+  "columnPreset": "simple",
+  "people": ["Sam Patel", {"name": "Alex Jones", "role": "Finance"}],
+  "labels": ["venue", "catering"],
+  "assumptions": ["Budget is about £3,000 for 60 people."],
+  "epics": [
+    {"title": "Venue", "ref": "venue-epic", "tasks": [
+      {"title": "Shortlist three venues", "ref": "shortlist", "assignee": "Sam Patel", "status": "in-progress", "labels": ["venue"],
+       "subtasks": [{"title": "Check accessibility"}, {"title": "Check capacity", "status": "done"}]},
+      {"title": "Book venue", "blockedBy": ["shortlist"], "status": "waiting", "waitingOn": "Finance approval of deposit", "assignee": "Alex Jones", "due": "2026-11-20"}
+    ]},
+    {"title": "Food and drink", "tasks": [{"title": "Choose caterer", "status": "blocked", "blockedReason": "Need final headcount", "labels": ["catering"], "priority": "high"}]}
+  ],
+  "tasks": [{"title": "Send save-the-date email", "comments": ["Draft in shared drive."]}]
+}
