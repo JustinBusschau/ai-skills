@@ -38,7 +38,8 @@ import re
 import sys
 from pathlib import Path
 
-from auditlib import board_paths, latest_run_dir, load_board, new_run_dir, run_dirs
+sys.dont_write_bytecode = True  # set before importing auditlib, so no cache lands in the skill
+from auditlib import KANBAN, board_paths, latest_run_dir, load_board, new_run_dir, run_dirs
 
 
 def to_utc(value):
@@ -195,6 +196,23 @@ def main(argv=None) -> int:
             seen_limits.append("- Changes from this audit are waiting to be applied (see PENDING in the run folder); "
                                "the sections above do not include them yet.")
         section("What this audit could not see", seen_limits)
+    # The design checklist (project-kanban-board's design_checklist.py), if this board has one.
+    pointer = paths["root"] / ".design-checklist-path"
+    if pointer.exists():
+        sys.path.insert(0, str(KANBAN / "scripts"))
+        import design_checklist as dcl
+        cl_path = Path(pointer.read_text(encoding="utf-8").strip())
+        by_id = {t["id"]: t for t in tickets}
+        lines = []
+        for item in dcl.parse(cl_path):
+            t = by_id.get(item["key"])
+            has_image = bool(t) and any(dcl.IMAGE.search(c.get("body", "")) and c.get("author") != "audit"
+                                        and c.get("updatedAt", "") > (item["added"] or "0000") for c in t["comments"])
+            if item["done"] and not has_image:
+                lines.append(f"- {item['key']} {item['text']}: ticked in the checklist, but no image is on the ticket yet")
+            elif not item["done"]:
+                lines.append(f"- {item['key']} {item['text']}" + (" (image added; please tick it)" if has_image else ""))
+        section(f"Designs and images needed ({cl_path})", lines)
     need = [t for t in tickets if any(labels.get(l) in ("needs-evidence", "needs-screenshot") for l in t["labels"])]
     section("Needs evidence from a person", [f"- {name(t)}: " + ", ".join(
         labels[l] for l in t["labels"] if labels.get(l) in ("needs-evidence", "needs-screenshot")) for t in need])

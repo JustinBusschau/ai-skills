@@ -932,7 +932,15 @@
     return data.path;
   }
 
-  function makeEditor({ value = '', placeholder = '', rows = 5, label = 'Text', onInput = null, startInPreview = false }) {
+  // Ticket-writing templates (references/ticket-writing.md in the skill).
+  const STORY_TEMPLATES = {
+    user: '**As a** <type of user>, **I want** <some goal> **so that** <some reason>.',
+    behaviour: '**Given** <pre-condition>, **When** <action>, **Then** <result or outcome>.',
+    job: '**When** <situation>, **I want to** <motivation>, **so I can** <expected outcome>.',
+  };
+  const TEMPLATE_TAIL = '\n\n### Technical notes\n- \n\n### Acceptance criteria\n- [ ] \n';
+
+  function makeEditor({ value = '', placeholder = '', rows = 5, label = 'Text', onInput = null, startInPreview = false, templates = false }) {
     const ta = h('textarea', { rows: String(rows), placeholder, value, 'aria-label': label });
     const preview = h('div', { class: 'md preview', hidden: true });
     const fileInput = h('input', { type: 'file', accept: 'image/png,image/jpeg,image/gif,image/webp', hidden: true, multiple: true });
@@ -994,7 +1002,22 @@
         writeBtn, previewBtn,
         h('span', { class: 'spacer' }),
         h('button', { type: 'button', onclick: () => { showPreview(false); fileInput.click(); }, title: 'Attach an image (you can also paste or drop one into the text box)' }, 'Add image'),
-        h('button', { type: 'button', onclick: () => { showPreview(false); insert(DIAGRAM_TEMPLATE); }, title: 'Insert a Mermaid diagram template' }, 'Add diagram')),
+        h('button', { type: 'button', onclick: () => { showPreview(false); insert(DIAGRAM_TEMPLATE); }, title: 'Insert a Mermaid diagram template' }, 'Add diagram'),
+        templates ? h('select', {
+          'aria-label': 'Insert a story template',
+          title: 'Every ticket starts with a story, then technical notes, then acceptance criteria',
+          onchange: (e) => {
+            const kind = e.target.value;
+            e.target.value = '';
+            if (!kind) return;
+            showPreview(false);
+            // At the start of an empty description, the whole skeleton; otherwise just the story line.
+            insert(ta.value.trim() ? STORY_TEMPLATES[kind] + '\n' : STORY_TEMPLATES[kind] + TEMPLATE_TAIL);
+          },
+        }, h('option', { value: '' }, 'Insert template'),
+        h('option', { value: 'user' }, 'User story'),
+        h('option', { value: 'behaviour' }, 'Behaviour (Given, When, Then)'),
+        h('option', { value: 'job' }, 'Job story')) : null),
       ta, preview, fileInput, status,
       h('div', { class: 'editor-hint' }, 'Markdown supported. Paste or drop images. Diagrams use ```mermaid blocks.'));
     return { el, textarea: ta, get value() { return ta.value; }, set value(v) { ta.value = v; }, focus: () => ta.focus(), showPreview };
@@ -1033,7 +1056,7 @@
     const hasChildren = existing && (state.idx.children.get(existing.id) || []).length > 0;
 
     const titleInput = h('input', { type: 'text', value: draft.title, required: true, maxlength: '300', class: 'title-input', 'aria-label': 'Title', placeholder: 'Ticket title', oninput: markDirty });
-    const desc = makeEditor({ value: draft.description, rows: 6, label: 'Description', placeholder: 'Describe the work, acceptance criteria, links, images, or diagrams.', onInput: markDirty, startInPreview: !isNew });
+    const desc = makeEditor({ value: draft.description, rows: 8, label: 'Description', placeholder: 'Start with the story (As a ... I want ... so that ...), then technical notes, then acceptance criteria. Use Insert template.', onInput: markDirty, startInPreview: !isNew, templates: true });
 
     const typeSel = h('select', { 'aria-label': 'Type', disabled: hasChildren, title: hasChildren ? 'A ticket with children cannot change type.' : null },
       ...Object.entries(TYPE_LABEL).map(([v, l]) => h('option', { value: v, selected: v === draft.type }, l)));

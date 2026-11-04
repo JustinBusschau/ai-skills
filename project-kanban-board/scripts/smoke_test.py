@@ -257,6 +257,46 @@ def run_tool_checks(work, port, proc, env, upload_path):
           (r.stderr + r2.stderr + r3.stderr)[-300:])
 
 
+def run_design_checks(work, tmp, env):
+    """The design checklist and wireframe rendering, on the temporary copy."""
+    scripts = SKILL_DIR / "scripts"
+    cwd = tmp / "design-cwd"
+    cwd.mkdir()
+    board = json.loads((work / "data" / "board.json").read_text(encoding="utf-8"))
+    keys = [t["id"] for t in board["tickets"] if t["type"] != "epic"][:2]
+    if len(keys) < 2:
+        skip("design checklist", "the board has fewer than two tickets")
+        return
+    dc = [sys.executable, str(scripts / "design_checklist.py"), str(work)]
+    r1 = subprocess.run(dc + ["add", keys[0], "design", "Final design of the first screen"], cwd=cwd,
+                        capture_output=True, text=True, env=env)
+    r2 = subprocess.run(dc + ["add", keys[0], "design", "Final design of the first screen"], cwd=cwd,
+                        capture_output=True, text=True, env=env)
+    subprocess.run(dc + ["add", keys[1], "screenshot", "Second screen with sample data"], cwd=cwd,
+                   capture_output=True, text=True, env=env)
+    files = list(cwd.glob("*-designs-needed.md"))
+    check("design checklist is created in the current folder, without duplicates",
+          r1.returncode == 0 and "Already listed" in r2.stdout and len(files) == 1
+          and files[0].read_text(encoding="utf-8").count("- [ ] **") == 2, r1.stdout + r2.stdout)
+    if files:
+        text = files[0].read_text(encoding="utf-8").replace(f"- [ ] **{keys[0]}**", f"- [x] **{keys[0]}**")
+        files[0].write_text(text, encoding="utf-8")
+        r = subprocess.run(dc + ["sync"], cwd=tmp, capture_output=True, text=True, env=env)
+        check("design checklist sync spots a ticked item with no image, from any folder",
+              "Ticked, but no new image found on the ticket: 1" in r.stdout and "Still needed: 1" in r.stdout, r.stdout)
+    html = tmp / "wire.html"
+    html.write_text("<!doctype html><body style='margin:0'><div style='width:100%;height:100px;background:#ccc'>"
+                    "Balance <span>API: balance</span></div></body>", encoding="utf-8")
+    png = tmp / "wire.png"
+    r = subprocess.run([sys.executable, str(scripts / "render_design.py"), str(html), str(png), "--device", "desktop"],
+                       capture_output=True, text=True, env=env, timeout=120)
+    if r.returncode != 0 and "No Chrome" in r.stdout:
+        skip("wireframe rendering", "no Chrome or Chromium found")
+    else:
+        size = (int.from_bytes(png.read_bytes()[16:20], "big"), int.from_bytes(png.read_bytes()[20:24], "big")) if png.exists() else None
+        check("wireframe renders at the device size", r.returncode == 0 and size == (1440, 900), f"{r.stdout} {size}")
+
+
 def run_ui_check(work, tmp, chrome, env, shot_dir):
     """Interactive browser test of the project's app code on a throwaway fixture board."""
     node = shutil.which("node")
@@ -433,6 +473,7 @@ def main(argv=None) -> int:
         check("export zip has the board and leaves out unreferenced images", ok, f"HTTP {st}")
 
         run_tool_checks(work, port, proc, env, path)
+        run_design_checks(work, tmp, env)
 
         node = shutil.which("node")
         if not node:

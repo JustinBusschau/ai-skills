@@ -391,6 +391,63 @@ def _dependency_cycle(by_id):
     return None
 
 
+# Ticket writing (references/ticket-writing.md): a story in one of three forms,
+# then optional technical notes, then acceptance criteria or a definition of done.
+STORY_FORMS = (
+    (re.compile(r"^as\b", re.I), ("i want", "so that"), "As a <type of user>, I want <some goal> so that <some reason>"),
+    (re.compile(r"^given\b", re.I), ("when", "then"), "Given <pre-condition>, When <action>, Then <result>"),
+    (re.compile(r"^when\b", re.I), ("i want to", "so i can"), "When <situation>, I want to <motivation>, so I can <expected outcome>"),
+)
+CRITERIA_HEADING = re.compile(r"^#{1,6}\s*(acceptance criteria|definition of done)\b[^\n]*\n(?:\s*\n)*\s*[-*]\s+\S",
+                              re.I | re.M)
+
+
+def ticket_writing_problems(ticket) -> list:
+    """What a ticket's description lacks under the ticket-writing standard (empty when it complies)."""
+    text = str(ticket.get("description") or "")
+    first = next((l for l in text.splitlines() if l.strip()), "")
+    plain = re.sub(r"[*_`]", "", first).strip()
+    problems = []
+    form = next((f for f in STORY_FORMS if f[0].match(plain)), None)
+    if form is None:
+        problems.append("its description does not start with a story (As a ... I want ... so that ...; "
+                        "Given ... When ... Then ...; or When ... I want to ... so I can ...)")
+    elif not all(word in plain.lower() for word in form[1]):
+        problems.append(f"its story is incomplete; use the form: {form[2]}")
+    if not CRITERIA_HEADING.search(text):
+        problems.append("it has no '### Acceptance criteria' (or '### Definition of done') section with at least one item")
+    return problems
+
+
+# Screens (references/screen-design.md): a ticket labelled "screen" carries a
+# "### Screen data" table saying where each data element comes from.
+SCREEN_LABEL = "screen"
+SCREEN_DATA_HEADING = re.compile(r"^#{1,6}\s*screen data\b.*$", re.I | re.M)
+IMAGE_REF = re.compile(r"uploads/[a-f0-9]{32}\.(png|jpg|gif|webp)")
+
+
+def screen_data_problems(ticket) -> list:
+    """What a screen ticket's screen data table lacks (empty when it complies)."""
+    text = str(ticket.get("description") or "")
+    m = SCREEN_DATA_HEADING.search(text)
+    if not m:
+        return ["it is labelled screen but has no '### Screen data' table saying where each data element comes from"]
+    rows = []
+    for line in text[m.end():].splitlines():
+        if line.strip().startswith("#"):
+            break
+        if line.strip().startswith("|"):
+            rows.append([c.strip() for c in line.strip().strip("|").split("|")])
+    header = [c.lower() for c in rows[0]] if rows else []
+    if "source" not in header or len(rows) < 3:
+        return ["its '### Screen data' table needs a 'Source' column and at least one row "
+                "(Element | Shows | Source | Loaded / refreshed | States and notes)"]
+    src = header.index("source")
+    if not any(len(r) > src and r[src] for r in rows[2:]):
+        return ["its '### Screen data' table has no source filled in"]
+    return []
+
+
 def board_warnings(board) -> list:
     """Things that are allowed (the browser can save them) but make the board less useful."""
     warnings = []
@@ -403,6 +460,17 @@ def board_warnings(board) -> list:
             warnings.append(f"ticket {t.get('id')}: blocked with no reason recorded.")
         if kind == "waiting" and not str(t.get("waitingOn", "")).strip():
             warnings.append(f"ticket {t.get('id')}: waiting with nothing recorded for who or what it waits on.")
+    label_names = {l.get("id"): str(l.get("name", "")).lower() for l in board.get("labels", []) if isinstance(l, dict)}
+    for t in board.get("tickets", []):
+        if isinstance(t, dict):
+            for p in ticket_writing_problems(t):
+                warnings.append(f"ticket {t.get('id')}: {p} (see references/ticket-writing.md).")
+            if SCREEN_LABEL in {label_names.get(l) for l in t.get("labels", [])}:
+                for p in screen_data_problems(t):
+                    warnings.append(f"ticket {t.get('id')}: {p} (see references/screen-design.md).")
+                if not any(IMAGE_REF.search(str(c.get("body", ""))) for c in t.get("comments", []) if isinstance(c, dict)):
+                    warnings.append(f"ticket {t.get('id')}: screen ticket with no design image yet; attach a wireframe "
+                                    "or list it in the design checklist (scripts/design_checklist.py).")
     by_id = {t.get("id"): t for t in board.get("tickets", []) if isinstance(t, dict)}
     backlog = next((c.get("name") for c in board.get("columns", []) if isinstance(c, dict) and c.get("kind") == "backlog"), None)
     for t in by_id.values():
@@ -682,6 +750,11 @@ def build_board_from_plan(plan, existing=None) -> dict:
             "history": [],
             "comments": [],
         }
+        for p in ticket_writing_problems(ticket):
+            problems.append(f"{where}: {p}. See references/ticket-writing.md.")
+        if SCREEN_LABEL in {str(n).lower() for n in (item.get("labels") or [])}:
+            for p in screen_data_problems(ticket):
+                problems.append(f"{where}: {p}. See references/screen-design.md.")
         kind = next((c["kind"] for c in board["columns"] if c["id"] == ticket["status"]), None)
         if kind == "blocked" and not str(ticket["blockedReason"]).strip():
             problems.append(f"{where}: is blocked but has no blockedReason; the card is not actionable without one.")

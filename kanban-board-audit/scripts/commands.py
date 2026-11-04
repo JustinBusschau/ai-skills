@@ -41,6 +41,7 @@ import argparse
 import datetime as dt
 import sys
 
+sys.dont_write_bytecode = True  # set before importing auditlib, so no cache lands in the skill
 from auditlib import (require_git, KINDS, approval_state, board_paths, command_hash, default_branch, definitions_hash,
                       ensure_gitignore, git, load_approvals, load_board, save_approvals)
 

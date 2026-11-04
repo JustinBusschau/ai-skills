@@ -31,7 +31,7 @@ from pathlib import Path
 sys.dont_write_bytecode = True
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
-from auditlib import EDIT_BOARD, key_regex, run_dirs, board_paths  # noqa: E402
+from auditlib import EDIT_BOARD, KANBAN, key_regex, run_dirs, board_paths  # noqa: E402
 
 ENV = dict(os.environ, PYTHONDONTWRITEBYTECODE="1")
 results = []
@@ -138,9 +138,15 @@ def main() -> int:
             {"id": "b", "kind": "move-back", "ticket": "RCP-4", "summary": "Overtaken proposal", "status": "superseded"},
             {"id": "d", "kind": "move-back", "ticket": "RCP-4", "summary": "Move RCP-4 back to In progress", "status": "open"},
             {"id": "e", "kind": "fix", "summary": "Trailing whitespace", "status": "declined"}]))
+        dcl = KANBAN / "scripts" / "design_checklist.py"
+        r = subprocess.run([sys.executable, str(dcl), str(board), "add", "RCP-3", "screenshot",
+                            "Recipe page for Pancakes on a phone"], cwd=tmp, capture_output=True, text=True, env=ENV)
+        check("the audit can add to the design checklist", r.returncode == 0 and "Created" in r.stdout, r.stdout + r.stderr)
         run(HERE / "standup.py", board)
         text = (runs[-1] / "standup.md").read_text()
         decisions = text.split("## Decisions for you")[1].split("##")[0]
+        check("stand-up lists the design checklist's items", "## Designs and images needed" in text
+              and "RCP-3" in text.split("## Designs and images needed")[1], text[-1200:])
         check("stand-up names the failing test, the lint problem, and what the audit could not see",
               "50.0 != 200" in text and "trailing whitespace" in text
               and "## What this audit could not see" in text, text[:1500])

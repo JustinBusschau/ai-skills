@@ -45,6 +45,17 @@ the server refuses to start; pick another with `--port`.
   change its Status instead. "Filters and view" shows the board controls.
 - **Open a card** by clicking it (or Enter when focused) to edit any field, add
   sub-tasks, record dependencies, and add comments.
+- **Screens**: tickets labelled `screen` hold the screen's design (a wireframe
+  or final design attached as an image) and a "Screen data" table saying
+  where each piece of data on the screen comes from. If Claude could not
+  provide a design, it listed it in a "designs needed" checklist file in the
+  folder you were working in; tick each item there once you have added the
+  image to its ticket.
+- **Ticket wording**: every ticket starts with a story (As a ... I want ... so
+  that ...; Given ... When ... Then ...; or When ... I want to ... so I can
+  ...), then any technical notes, then acceptance criteria. In a ticket's
+  description, "Insert template" adds any of the three forms with those
+  headings ready to fill in.
 - **Comments and descriptions** accept Markdown. Paste or drop a screenshot into
   the text box to attach it, or use "Add image". "Add diagram" inserts a Mermaid
   diagram block; use Preview to check it. Each comment shows when it was added

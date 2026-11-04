@@ -2,16 +2,84 @@
   "title": "Office summer party",
   "keyPrefix": "PARTY",
   "columnPreset": "simple",
-  "people": ["Sam Patel", {"name": "Alex Jones", "role": "Finance"}],
-  "labels": ["venue", "catering"],
-  "assumptions": ["Budget is about £3,000 for 60 people."],
-  "epics": [
-    {"title": "Venue", "ref": "venue-epic", "tasks": [
-      {"title": "Shortlist three venues", "ref": "shortlist", "assignee": "Sam Patel", "status": "in-progress", "labels": ["venue"],
-       "subtasks": [{"title": "Check accessibility"}, {"title": "Check capacity", "status": "done"}]},
-      {"title": "Book venue", "blockedBy": ["shortlist"], "status": "waiting", "waitingOn": "Finance approval of deposit", "assignee": "Alex Jones", "due": "2026-11-20"}
-    ]},
-    {"title": "Food and drink", "tasks": [{"title": "Choose caterer", "status": "blocked", "blockedReason": "Need final headcount", "labels": ["catering"], "priority": "high"}]}
+  "people": [
+    "Sam Patel",
+    {
+      "name": "Alex Jones",
+      "role": "Finance"
+    }
   ],
-  "tasks": [{"title": "Send save-the-date email", "comments": ["Draft in shared drive."]}]
+  "labels": [
+    "venue",
+    "catering"
+  ],
+  "assumptions": [
+    "Budget is about £3,000 for 60 people."
+  ],
+  "epics": [
+    {
+      "title": "Venue",
+      "ref": "venue-epic",
+      "tasks": [
+        {
+          "title": "Shortlist three venues",
+          "ref": "shortlist",
+          "assignee": "Sam Patel",
+          "status": "in-progress",
+          "labels": [
+            "venue"
+          ],
+          "subtasks": [
+            {
+              "title": "Check accessibility",
+              "description": "**Given** a shortlisted venue, **When** we ask about access, **Then** we know whether every guest can get in and around.\n\n### Acceptance criteria\n- [ ] Step-free entrance and an accessible toilet confirmed for each venue."
+            },
+            {
+              "title": "Check capacity",
+              "status": "done",
+              "description": "**As an** event organiser, **I want** each venue's capacity confirmed **so that** all 60 guests fit comfortably.\n\n### Acceptance criteria\n- [ ] Standing and seated capacity recorded for each venue."
+            }
+          ],
+          "description": "**As an** event organiser, **I want** three venues to compare **so that** we can choose one that fits the budget and the guests.\n\n### Acceptance criteria\n- [ ] Three venues within an hour of the office are listed with price and capacity.\n- [ ] Each is checked for step-free access."
+        },
+        {
+          "title": "Book venue",
+          "blockedBy": [
+            "shortlist"
+          ],
+          "status": "waiting",
+          "waitingOn": "Finance approval of deposit",
+          "assignee": "Alex Jones",
+          "due": "2026-11-20",
+          "description": "**As an** event organiser, **I want** the chosen venue booked **so that** nobody else can take the date.\n\n### Acceptance criteria\n- [ ] Booking confirmed in writing for the agreed date.\n- [ ] Deposit paid and receipt filed."
+        }
+      ],
+      "description": "**As an** event organiser, **I want** a suitable venue booked **so that** the party has a confirmed place to happen.\n\n### Definition of done\n- [ ] A venue for 60 people is booked and the deposit paid.\n- [ ] The booking confirmation is saved in the shared drive."
+    },
+    {
+      "title": "Food and drink",
+      "tasks": [
+        {
+          "title": "Choose caterer",
+          "status": "blocked",
+          "blockedReason": "Need final headcount",
+          "labels": [
+            "catering"
+          ],
+          "priority": "high",
+          "description": "**As an** event organiser, **I want** a caterer chosen **so that** food is arranged for the final headcount.\n\n### Acceptance criteria\n- [ ] Two quotes compared for the final headcount.\n- [ ] Vegetarian, vegan, and gluten-free options confirmed."
+        }
+      ],
+      "description": "**As a** guest, **I want** good food and drink at the party **so that** the evening is enjoyable.\n\n### Definition of done\n- [ ] A caterer is booked for the final headcount, with dietary needs covered."
+    }
+  ],
+  "tasks": [
+    {
+      "title": "Send save-the-date email",
+      "comments": [
+        "Draft in shared drive."
+      ],
+      "description": "**When** the date is fixed, **I want to** tell everyone straight away, **so I can** maximise attendance.\n\n### Acceptance criteria\n- [ ] Email sent to the whole office with the date and venue area."
+    }
+  ]
 }

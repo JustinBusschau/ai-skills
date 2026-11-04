@@ -100,6 +100,15 @@ try {
   const t2 = sb.tickets.find((t) => t.id === 'PARTY-2');
   check('ticket edits saved', t2.title === 'Shortlist venues (renamed)' && t2.assignee === 'p-alex-jones', JSON.stringify(t2).slice(0, 200));
 
+  // Story templates in the description editor
+  await ev(`document.querySelector('#new-ticket').click()`);
+  await sleep(200);
+  const tpl = await ev(`const d = document.querySelector('#ticket-dialog'); const sel = d.querySelector('select[aria-label="Insert a story template"]');
+    sel.value = 'user'; sel.dispatchEvent(new Event('change')); return d.querySelector('textarea[aria-label="Description"]').value;`);
+  check('description editor inserts the story template', tpl.startsWith('**As a** <type of user>') && tpl.includes('### Acceptance criteria'), tpl);
+  await ev(`window.confirm = () => true; document.querySelector('#ticket-dialog button[aria-label="Close"]').click();`);
+  await sleep(200);
+
   // Create new ticket
   await ev(`document.querySelector('#new-ticket').click()`);
   await ev(`const d = document.querySelector('#ticket-dialog'); d.querySelector('.title-input').value = 'Book DJ'; const p = d.querySelector('select[aria-label="Parent"]'); p.value = 'PARTY-6'; d.querySelector('button[type=submit]').click();`);

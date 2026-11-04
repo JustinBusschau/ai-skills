@@ -54,6 +54,7 @@ data/backups/
 data/.board.lock
 data/.kanban-token
 data/.server.json
+.design-checklist-path
 __pycache__/
 *.new
 .previous-app-*/

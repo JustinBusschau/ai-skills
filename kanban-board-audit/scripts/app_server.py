@@ -32,6 +32,7 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
+sys.dont_write_bytecode = True  # set before importing auditlib, so no cache lands in the skill
 from auditlib import require_git, approval_state, board_paths, default_branch, latest_run_dir, load_approvals, load_board, prepare_worktree
 
 

@@ -8,10 +8,11 @@ Creates <out-dir>/recipe-board (a board with a `repos` entry) and
 one passing and one failing test, a lint problem a fixer could correct, and a
 static page to screenshot). The scenario:
 
-- RCP-2 "Add recipe search" is In progress and has a commit plus a passing test.
-- RCP-3 "Recipe detail page" is in Ready, has a commit and a visible page.
-- RCP-4 "Fix ingredient scaling" is Done, but its test fails (contradicted).
-- RCP-5 "Export shopping list" is In progress with no commits at all.
+- RCP-2 "Find recipes by title" is In progress and has a commit plus a passing test.
+- RCP-3 "Read a recipe's details" is in Ready, has a commit and a visible page.
+- RCP-4 "Scale ingredients to my servings" is Done, but its test fails (contradicted).
+- RCP-5 "Export a shopping list" is In progress with no commits, and its
+  description has a story but no acceptance criteria.
 - lint.py flags trailing whitespace in recipes/search.py (a small fix).
 """
 
@@ -86,19 +87,38 @@ def main():
                    "appUrl": "http://localhost:8765/",
                    "commands": {"setup": "python3 -c \"print('nothing to install')\"", "test": "python3 -m unittest -v", "lint": "python3 lint.py",
                                 "start": "python3 -m http.server 8765 --bind 127.0.0.1 --directory app"}}],
-        "epics": [{"title": "Recipes", "tasks": [
-            {"title": "Add recipe search", "status": "In progress", "assignee": "Sam Patel", "labels": ["backend"]},
-            {"title": "Recipe detail page", "status": "Ready", "assignee": "Ana Costa", "labels": ["web"],
-             "description": "Show a recipe's title, servings, time, and ingredient list."},
-            {"title": "Fix ingredient scaling", "status": "Done", "assignee": "Sam Patel", "labels": ["backend"],
-             "description": "Doubling the servings doubles each ingredient quantity."},
-            {"title": "Export shopping list", "status": "In progress", "assignee": "Ana Costa"},
+        "epics": [{"title": "Recipes",
+                   "description": "**As a** home cook, **I want** to find and follow recipes **so that** I can cook "
+                                  "something new without fuss.\n\n### Definition of done\n- [ ] Cooks can search "
+                                  "recipes, read one, and scale it to their servings.",
+                   "tasks": [
+            {"title": "Find recipes by title", "status": "In progress", "assignee": "Sam Patel", "labels": ["backend"],
+             "description": "**As a** home cook, **I want** to search recipes by title **so that** I can find a dish "
+                            "quickly.\n\n### Acceptance criteria\n- [ ] Searching 'pan' returns Pancakes and not Soup.\n"
+                            "- [ ] Search ignores capital letters."},
+            {"title": "Read a recipe's details", "status": "Ready", "assignee": "Ana Costa", "labels": ["web"],
+             "description": "**As a** home cook, **I want** to see a recipe's servings, time, and ingredients **so that** "
+                            "I know what I need before I start.\n\n### Acceptance criteria\n- [ ] The page shows the "
+                            "title, servings, and preparation time.\n- [ ] The page lists every ingredient with its quantity."},
+            {"title": "Scale ingredients to my servings", "status": "Done", "assignee": "Sam Patel", "labels": ["backend"],
+             "description": "**Given** a recipe for 2, **When** I choose 4 servings, **Then** every ingredient quantity "
+                            "doubles.\n\n### Acceptance criteria\n- [ ] 100 g for 2 servings becomes 200 g for 4.\n"
+                            "- [ ] Halving the servings halves the quantities."},
+            {"title": "Export a shopping list", "status": "In progress", "assignee": "Ana Costa",
+             "description": "**When** I have chosen recipes for the week, **I want to** export one shopping list, **so I "
+                            "can** buy everything in one trip.\n\n### Acceptance criteria\n- [ ] placeholder"},
         ]}],
     }
     plan_path = out / "fixture-plan.json"
     plan_path.write_text(json.dumps(plan, indent=2), encoding="utf-8")
     subprocess.run([sys.executable, str(KANBAN / "scripts" / "create_board.py"), "--plan", str(plan_path),
                     "--out", str(board_dir)], check=True, capture_output=True)
+    # RCP-5 deliberately lacks acceptance criteria, as a hand-made ticket might, so the
+    # audit's "propose criteria" path can be exercised (plans themselves must have them).
+    subprocess.run([sys.executable, str(KANBAN / "scripts" / "edit_board.py"), str(board_dir), "--op", json.dumps(
+        {"op": "set", "id": "RCP-5", "fields": {"description": "**When** I have chosen recipes for the week, **I want to** "
+                                                "export one shopping list, **so I can** buy everything in one trip."}})],
+                   check=True, capture_output=True)
     print(f"Board: {board_dir}\nRepository: {repo}")
 
 

@@ -64,6 +64,24 @@ choosing between a simple, standard, and delivery board, decomposing the
 input, writing tickets, and what to leave out. Tell the user in one sentence
 which tier you chose and why.
 
+Then read `references/ticket-writing.md`, which sets how every ticket is
+worded. Each one is product-focused: a story first (**As a** <type of user>,
+**I want** <some goal> **so that** <some reason>; **Given** <pre-condition>,
+**When** <action>, **Then** <result> for behaviour; or **When** <situation>,
+**I want to** <motivation>, **so I can** <expected outcome> for a job to be
+done), then any technical detail, then acceptance criteria or a definition
+of done clear enough for a tester to pass or fail it. Plans that do not
+follow it are rejected.
+
+If the input describes any screens (app screens, portal pages, dashboards),
+also read `references/screen-design.md`. Every screen gets a ticket labelled
+`screen`, with a `### Screen data` table saying, for each element that shows
+data (a name, an account number, a balance, a score, the last interaction),
+what it shows and where it comes from (an API call and field, local secure
+storage, a cache, the device, user input). Write `Unknown: <question>` rather
+than guessing a source, and list those questions in the plan's
+`assumptions`.
+
 ### 4. Write and check the plan
 
 If the work happens in code repositories the user named, list them in the
@@ -117,6 +135,22 @@ a read-only folder) or a defect:
   pass, because that changes every future board. Report the failure with the
   check's output instead, and do not describe the board as verified.
 
+### 5a. Designs for screens
+
+For each `screen` ticket, provide a design (`references/screen-design.md`,
+sections 3 and 4):
+
+- If Chrome or Chromium is available, write a simple HTML wireframe per
+  screen, with each data element labelled by its source, render it with
+  `scripts/render_design.py`, look at it, and attach it to the ticket with
+  `edit_board.py`'s `attach` operation.
+- For anything you cannot provide (no browser, a final visual design from a
+  designer, a screenshot of a running app), add an item to the design
+  checklist with `scripts/design_checklist.py <board-dir> add <KEY> <kind>
+  "<what it must show>" --how "<how to get it>"`. That creates or updates a
+  checklist file in the current working folder, naming the ticket for each
+  image.
+
 ### 6. Start it and hand over
 
 Start the server in the background (for example with the Bash tool's
@@ -159,7 +193,11 @@ Then tell the user, briefly:
   the board folder, which stops only this board's server;
 - that everything is saved in `data/` with backups in `data/backups/`, and it
   has no login and listens on this machine only;
-- any smoke-test checks that were skipped, and so what was not verified.
+- any smoke-test checks that were skipped, and so what was not verified;
+- if the design checklist was created or changed: its path, how many items
+  it holds and how many are new, and a request to tick each item in the file
+  (`- [ ]` to `- [x]`) once they have added that image to the board. Say
+  nothing about it if no item was needed.
 
 ## Working with an existing board
 
@@ -183,6 +221,9 @@ you work from its current state.
   on macOS or Windows, so stop the container while editing. Avoid
   hand-editing `board.json`; if you must, stop the server first, follow
   `references/board-format.md`, and run `validate_board.py` afterwards.
+- **Designs supplied by the user**: run `design_checklist.py <board-dir> sync`
+  to see which ticked items have their image on the board, and tell the user
+  about any item ticked without an image.
 - **Report** ("what's blocked?", a status update): run `board_report.py`,
   with `--since <YYYY-MM-DD>` for what was completed and what moved in a
   period, and write the answer from its output.
@@ -231,6 +272,11 @@ you work from its current state.
 
 - **Proportion.** A holiday does not need sub-tasks and a sign-off column; a
   multi-team platform build does.
+- **Product-focused tickets.** Every ticket has a story and testable
+  acceptance criteria, as `references/ticket-writing.md` describes.
+- **Every screen designed, every data element sourced.** No screen ticket
+  without a design (attached, or listed in the design checklist) and a
+  screen data table.
 - **Trust.** Do not invent names, dates, or progress. Unknowns become
   assumptions, placeholders, or unassigned tickets.
 - **Reasons.** Every blocked or waiting ticket says why, or who it waits on.

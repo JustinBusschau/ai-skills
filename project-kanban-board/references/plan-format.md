@@ -53,12 +53,12 @@ Every ticket accepts these fields:
 
 | Field | Meaning |
 | --- | --- |
-| `title` | Required. Verb-first and specific: "Book venue for 60 guests", not "Venue". |
-| `description` | Markdown. What done looks like, and where it came from (for example "Source: arc42 section 5.2"). |
+| `title` | Required. A short, product-focused summary of the story's goal, under about 70 characters: "Reschedule a parcel collection", not "Add PATCH /bookings". See `references/ticket-writing.md`. |
+| `description` | Required in practice: the plan is rejected without it. Markdown in three parts, following `references/ticket-writing.md`: the story (As a ... I want ... so that ...; Given ... When ... Then ...; or When ... I want to ... so I can ...), optional `### Technical notes` (including the source, such as "arc42 section 5.2"), and `### Acceptance criteria` or `### Definition of done` with at least one checklist item. |
 | `status` | A column id, name, or kind (`"done"`, `"In progress"`, `"waiting"`). Defaults to the first column. |
 | `assignee` | A name from `people`. A sub-task without an `assignee` key takes its parent task's assignee; give `"assignee": null` to leave it unassigned, or a name to give it to someone else. |
 | `priority` | `low`, `medium` (default), `high`, or `critical`. |
-| `labels` | Names from `labels`. |
+| `labels` | Names from `labels`. A ticket labelled `screen` must also have a `### Screen data` table in its description (`references/screen-design.md`). |
 | `due` | `YYYY-MM-DD`. Only when the input gives or clearly implies the date. |
 | `blockedReason` | Why it is blocked. Required with a `blocked` status. |
 | `waitingOn` | Who or what it is waiting on. Required with a `waiting` status. |
@@ -88,11 +88,14 @@ sit under epics (or nothing), and sub-tasks must sit under tasks.
   "assumptions": ["Around 25 people, one day, within an hour of the office."],
   "settings": { "colourBy": "label" },
   "tasks": [
-    { "title": "Agree date and budget with the department head", "ref": "date",
-      "status": "waiting", "waitingFor": "stakeholder", "waitingOn": "Department head to confirm budget" },
-    { "title": "Shortlist three venues within an hour of the office", "ref": "venues",
-      "assignee": "Priya Shah", "labels": ["booking"], "blockedBy": ["date"], "priority": "low" },
-    { "title": "Send save-the-date to the team", "labels": ["comms"], "blockedBy": ["date"], "priority": "low" }
+    { "title": "Agreed date and budget for the away day", "ref": "date",
+      "status": "waiting", "waitingFor": "stakeholder", "waitingOn": "Department head to confirm budget",
+      "description": "**As the** organiser, **I want** an agreed date and budget **so that** I can book with confidence.\n\n### Acceptance criteria\n- [ ] The department head has confirmed the date and budget in writing." },
+    { "title": "Choose from three venues near the office", "ref": "venues",
+      "assignee": "Priya Shah", "labels": ["booking"], "blockedBy": ["date"], "priority": "low",
+      "description": "**As the** organiser, **I want** three venues to compare **so that** we pick one that suits the team and the budget.\n\n### Acceptance criteria\n- [ ] Three venues within an hour of the office, each with price, capacity for 25, and step-free access noted." },
+    { "title": "Team knows the away-day date early", "labels": ["comms"], "blockedBy": ["date"], "priority": "low",
+      "description": "**When** the date is agreed, **I want to** tell the team at once, **so I can** get as many people there as possible.\n\n### Acceptance criteria\n- [ ] Save-the-date sent to the whole team within a day of the date being agreed." }
   ]
 }
 ```
@@ -108,14 +111,20 @@ sit under epics (or nothing), and sub-tasks must sit under tasks.
   "labels": ["ios", "android", "backend", "nfr"],
   "settings": { "swimlanes": "epic" },
   "epics": [
-    { "title": "Accounts and sign-in", "ref": "accounts", "tasks": [
-      { "title": "Define sign-in options with the product owner", "ref": "signin-decision",
+    { "title": "Accounts and sign-in", "ref": "accounts",
+      "description": "**As a** loyalty member, **I want** a secure account I can sign in to **so that** my points are mine alone.\n\n### Definition of done\n- [ ] Members can sign in, stay signed in, and are protected from password guessing.",
+      "tasks": [
+      { "title": "Agreed sign-in options", "ref": "signin-decision",
         "status": "waiting", "waitingFor": "stakeholder",
-        "waitingOn": "Product owner decision on social sign-in (brief section 4)" },
-      { "title": "Build sign-in API", "labels": ["backend"], "blockedBy": ["signin-decision"],
+        "waitingOn": "Product owner decision on social sign-in (brief section 4)",
+        "description": "**As a** product owner, **I want** the sign-in options decided **so that** the team builds only what members will use.\n\n### Acceptance criteria\n- [ ] A recorded decision on which sign-in methods the MVP offers (brief section 4)." },
+      { "title": "Members sign in to their loyalty account", "labels": ["backend"], "blockedBy": ["signin-decision"],
+        "description": "**As a** loyalty member, **I want** to sign in on my phone **so that** I can see and spend my points.\n\n### Technical notes\n- Sign-in API issues short-lived access tokens with refresh tokens.\n\n### Acceptance criteria\n- [ ] A member with valid details is signed in and sees their points balance.\n- [ ] Given wrong details, When the member signs in, Then they see an error and stay signed out.\n- [ ] Sessions survive an app restart for 30 days.",
         "subtasks": [
-          { "title": "Token issuance and refresh" },
-          { "title": "Rate limiting on sign-in attempts", "labels": ["nfr"] }
+          { "title": "Stay signed in between app launches",
+            "description": "**Given** a member signed in within the last 30 days, **When** they reopen the app, **Then** they are still signed in.\n\n### Acceptance criteria\n- [ ] Token refresh works after the access token expires.\n- [ ] A revoked refresh token signs the member out." },
+          { "title": "Protect accounts from password guessing", "labels": ["nfr"],
+            "description": "**Given** five failed sign-ins for one account within 15 minutes, **When** a sixth is attempted, **Then** it is refused for 15 minutes.\n\n### Acceptance criteria\n- [ ] The sixth attempt is refused with a clear message.\n- [ ] Sign-in works again after 15 minutes." }
         ] }
     ] }
   ]
@@ -133,7 +142,9 @@ present). To attach new work to existing tickets, use their keys:
 
 ```json
 {
-  "tasks": [ { "title": "Add biometric sign-in", "epic": "LOY-1" } ],
-  "subtasks": [ { "title": "Lockout after five failed attempts", "parent": "LOY-3" } ]
+  "tasks": [ { "title": "Sign in with Face ID or a fingerprint", "epic": "LOY-1",
+               "description": "**As a** loyalty member, **I want** to sign in with Face ID or a fingerprint **so that** I do not have to type my password.\n\n### Acceptance criteria\n- [ ] A member who enables biometrics is signed in by it on the next launch." } ],
+  "subtasks": [ { "title": "Fall back to a password when biometrics fail", "parent": "LOY-3",
+                  "description": "**Given** biometrics fail three times, **When** the member tries again, **Then** they are asked for their password.\n\n### Acceptance criteria\n- [ ] The password prompt appears after the third failure." } ]
 }
 ```

@@ -138,6 +138,16 @@ anything you assumed in `assumptions`. If one missing fact would reshape the
 plan (for example whether a trip is domestic or needs visas), ask it before
 building rather than guessing.
 
+### Screens in any input
+
+Whatever the input type, when it describes screens (a wireframe, a user
+journey with named screens, a portal's pages, a dashboard), give each screen
+its own ticket labelled `screen`, as `references/screen-design.md`
+describes, under the epic of its journey. Take data sources from the API
+contract or architecture document where there is one (cite the operation and
+field); where the input does not say, write `Unknown` and raise the question
+in `assumptions` rather than guessing.
+
 ### Large, complex delivery briefs
 
 For a brief like "micro-service, event-driven system with iOS and Android
@@ -162,11 +172,19 @@ apps, web portals, and BI dashboards":
 
 ## 3. Writing good tickets
 
-- **Title**: verb first, specific, and short enough to read on a card (under
-  about 70 characters): "Publish order-created events to the event bus".
-- **Description**: what done looks like as a short checklist of acceptance
-  criteria, plus the source ("From: product brief, Rewards section").
-  Traceability lets the manager check the board against the documents.
+- **Wording**: every ticket is product-focused and follows
+  `references/ticket-writing.md`: a story first (As a <type of user>, I want
+  <some goal> so that <some reason>; Given <pre-condition>, When <action>,
+  Then <result> for behaviour; When <situation>, I want to <motivation>, so I
+  can <expected outcome> for a job to be done), then any technical notes,
+  then acceptance criteria or a definition of done that testing can pass or
+  fail. Read it before writing the plan; the plan is rejected without them.
+- **Title**: a short, product-focused summary of the story's goal (under
+  about 70 characters): "Customers see when their parcel is ready", not
+  "Publish order-created events".
+- **Traceability**: cite the source in technical notes or criteria ("From:
+  product brief, Rewards section", "FR-12"), so the manager can check the
+  board against the documents.
 - **Granularity**: a task is something one person can finish and someone can
   check, typically half a day to a week of effort for technical work, or one
   sitting for personal projects. Split anything larger into sub-tasks or

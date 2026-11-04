@@ -21,7 +21,11 @@ which holds everything from one audit. If a script misbehaves,
 `python3 <audit>/scripts/self_test.py` checks them all on a throwaway board.
 
 Read `references/evidence-standard.md` before assessing any ticket; it sets
-the thresholds, verdicts, and comment format. Read `references/scheduling.md`
+the thresholds, verdicts, and comment format. Tickets are worded to the
+project-kanban-board skill's `references/ticket-writing.md` (a story, then
+technical notes, then acceptance criteria); read it before raising a ticket
+or drafting criteria, because evidence is judged against each ticket's
+acceptance criteria. Read `references/scheduling.md`
 only when setting up or running a scheduled audit.
 
 ## Modes
@@ -68,7 +72,10 @@ checks this right before applying (`scan_repos.py <board-dir> --board-check`).
 In attended mode you can ask the user now to stop the container for the
 audit.
 
-Run `python3 <audit>/scripts/proposals.py <board-dir> list` to see every
+Run `python3 <kanban>/scripts/design_checklist.py <board-dir> sync` to see
+which designs and screenshots the user has supplied (the design checklist;
+see the evidence standard, section 5), and
+`python3 <audit>/scripts/proposals.py <board-dir> list` to see every
 earlier proposal and what the manager decided, and look for run folders
 holding a `PENDING`
 file (changes left unapplied because the board was served from Docker; see
@@ -146,7 +153,9 @@ ticket back or raise a ticket for the code. Sort what you find into:
   threshold;
 - new tickets, only for problems no existing ticket covers (a ticket
   contradicted by the evidence gets a move-back proposal, not a second
-  ticket);
+  ticket), each written to `ticket-writing.md`;
+- for a ticket with no story or no acceptance criteria, a proposal to add
+  them, with your draft (it cannot move past In progress without them);
 - proposals for the manager: moves back, moves into or out of Blocked or
   Awaiting action, small fixes, environment problems, and anything else that
   is their call.
@@ -273,7 +282,12 @@ leave it for the morning.
 
 Then summarise for the user: how many tickets you examined, moved forward,
 commented on, and created; what is waiting for their decision; what needs
-evidence from a person; and what the audit could not see.
+evidence from a person; and what the audit could not see. If the design
+checklist was created or changed in this run, give its path and how many
+items are new, and ask the user to tick each item in the file once they have
+added that image to the board; mention any item ticked without an image on
+its ticket. Overnight, the stand-up's "Designs and images needed" section
+carries this instead.
 
 ### 10. Offer a schedule
 

@@ -24,6 +24,7 @@ why it is where it is, without asking.
 | Test relevance | A test file or test name the ticket's commits touched, or a test named after the behaviour the ticket describes, ran and passed. | "The whole suite passed" on its own: say what the suite covers, or call it supporting evidence only. |
 | Screenshot | Shows the behaviour the ticket describes, with a sentence of narrative saying what to look at. Captured this audit, or attached by a person. | A sign-in page, an error screen, a blank page, or an image older than the latest commit for that ticket. |
 | Sign-off | A comment or status-history entry recording who signed off and when. | Your own judgement. Sign-off is a human act. |
+| Acceptance criteria | Each criterion in the ticket's `### Acceptance criteria` (or `### Definition of done`) section is matched to the evidence that shows it passing: a named test, a screenshot showing it, or a person's confirmation in a comment. Criteria are what "done" means for the ticket (the project-kanban-board skill's `references/ticket-writing.md`). | Evidence that does not speak to any criterion, however much of it there is. |
 
 Evidence must come from this audit or from what is already on the ticket.
 Never infer that something works because it was planned, or because a
@@ -43,13 +44,21 @@ the target column's kind:
 | `todo` | Never by the audit: deciding what is ready is planning. |
 | `in_progress` | At least one commit naming the ticket, or a branch naming it that holds at least one commit of its own (`commitsNotOnDefault` not empty). A branch with no commits is not evidence of work. A ticket in `backlog` or `todo` with such evidence goes straight to the first `in_progress` column. |
 | `testing` | The ticket's work is on the default branch (commits with `onDefaultBranch`, or a merged pull request with `mergeCommitOnDefault`), because that is the only code the audit's checks run on; an open pull request is evidence of progress, not of passing checks. And the repository's checks passed in this audit: build or lint, whichever are approved, or the test command if neither exists. With no approved command at all, the threshold cannot be met: say so, do not move it. |
-| `signoff` | Everything for `testing`, plus relevant tests passed in this audit (section 1), plus a screenshot with narrative if the ticket changes something a person sees. |
+| `signoff` | Everything for `testing`, plus relevant tests passed in this audit (section 1), plus a screenshot with narrative if the ticket changes something a person sees, plus every acceptance criterion matched to evidence (section 1). A criterion nothing yet shows holds the ticket. A `screen` ticket also needs a screenshot of the running screen that matches its design and shows every element in its `### Screen data` table. |
 | `done` | On a board with a `signoff` column: never; sign-off is for a person. On a board without one: everything for `signoff`. |
 
 Further rules:
 
 - Never move a ticket into or out of `blocked` or `waiting` on your own;
   propose it.
+- A ticket without acceptance criteria (or without a story) cannot move past
+  `in_progress`: nothing defines what passing means. Propose adding them
+  (kind `other`, key `other:criteria-<KEY>`), with a draft written to
+  `references/ticket-writing.md` in the project-kanban-board skill, based on
+  the ticket's title, its story if it has one, and its commits. Never rewrite
+  a ticket's description without the manager's approval; once approved, apply
+  the draft with `set` (field `description`), keeping anything the ticket
+  already said.
 - Never move a parent task further than its least advanced sub-task, and
   never move an epic; suggest it in the stand-up instead.
 - Apart from the backlog rule above, move one column of the flow at a time
@@ -121,6 +130,11 @@ from people's. Keep it short and factual:
 
 > Tests  212 passed, 212 total
 
+Acceptance criteria:
+- [x] A member with valid details is signed in and sees their points balance: `signin.test.ts` "signs in a valid member"
+- [x] Given wrong details, When the member signs in, Then they see an error: `signin.test.ts` "rejects a wrong password"
+- [ ] Sessions survive an app restart for 30 days: no test covers this yet
+
 Not shown by this evidence: behaviour against the real identity provider (tests use a stub).
 ```
 
@@ -147,7 +161,17 @@ physical device, a stakeholder's confirmation):
 1. Add the label `needs-screenshot` (or `needs-evidence` for anything else)
    with `set`, keeping the ticket's other labels. Create the label first with
    `add-label` if the board does not have it.
-2. Add a comment that tells the person exactly what to do:
+2. Add it to the design checklist, the file in the current working folder
+   that lists every image the user must provide (project-kanban-board's
+   `references/screen-design.md`, section 4):
+
+```bash
+python3 <kanban>/scripts/design_checklist.py <board-dir> add <KEY> screenshot "<what it must show>" --how "<how to get it on screen>"
+```
+
+   It never duplicates an item, so it is safe to run on every audit.
+3. Add a comment that tells the person exactly what to do, and that the item
+   is also in the checklist file (give its path):
 
 ```markdown
 **Audit 2026-11-05: screenshot needed before this can move to Awaiting sign-off**
@@ -162,7 +186,13 @@ Please show the reschedule screen after choosing a new collection slot.
 When that is done, remove the needs-screenshot label (or leave it: the next audit removes it once it finds an image newer than this request).
 ```
 
-On a later audit, if a person has added an image comment after the request
+A `screen` ticket with no design attached and no checklist item gets a
+checklist item of kind `design` for its design (never a duplicate ticket).
+
+At the start of each audit, `design_checklist.py <board-dir> sync` shows
+which ticked items have their image on the board. A ticked item with no image
+is reported to the user (attended) or in the stand-up (overnight). On a later
+audit, if a person has added an image comment after the request
 (a comment with no `author`; the audit's own comments have `author: audit`),
 check it meets section 1, then remove the label and record the evidence.
 Comments without an author are treated as people's, so other scripts that
@@ -177,14 +207,19 @@ nobody owns. Do not create tickets for the small fixes in section 7, and do
 not create one if an open ticket already covers it (search titles and the
 `audit` label first).
 
-Each new ticket:
+Each new ticket follows the project-kanban-board skill's
+`references/ticket-writing.md`, like every other ticket on the board (plans
+that do not are rejected):
 
-- has a verb-first title saying what must happen ("Fix failing reschedule
-  test after slot model change"), and the label `audit`;
-- sits under the epic of the ticket or code it relates to;
-- quotes the evidence that prompted it (the failing test's name and the key
-  lines of output, the commit, or the missing behaviour) in its description;
-- starts in the first column, or `waiting` with `waitingFor` if it is a
+- a short, product-focused title and the label `audit`;
+- a description that starts with the story in the form that fits (a user
+  story for a missing capability, Given/When/Then for wrong behaviour, a job
+  story for a job someone cannot get done), then `### Technical notes`
+  quoting the evidence that prompted it (the failing test's name and the key
+  lines of output, the commit, or the missing behaviour), then `### Acceptance
+  criteria` that state what passing looks like;
+- it sits under the epic of the ticket or code it relates to;
+- it starts in the first column, or `waiting` with `waitingFor` if it is a
   third party's move.
 
 Use `create_board.py --append` with a small plan, after checking it with
@@ -195,9 +230,9 @@ existing epic by its key:
 {
   "labels": ["audit"],
   "tasks": [
-    { "title": "Fix inverted ingredient scaling so doubling servings doubles quantities", "epic": "RCP-1",
+    { "title": "Main builds again after the parser upgrade", "epic": "RCP-1",
       "labels": ["audit", "backend"], "priority": "high",
-      "description": "`tests/test_scale.py::test_doubles_for_twice_the_servings` fails:\n\n> AssertionError: 50.0 != 200\n\nFound by the audit on 2026-11-05; RCP-4 claims this is done." }
+      "description": "**As a** developer on the recipe team, **I want** the main branch to build again after the markdown parser upgrade **so that** finished work can be tested and released.\n\n### Technical notes\n- `npm run build` fails on main at 8c1d2e4 since the upgrade in that commit:\n\n> TS2305: Module 'md-parse' has no exported member 'parseInline'\n\n- Found by the audit on 2026-11-05; no ticket covers it.\n\n### Acceptance criteria\n- [ ] `npm run build` passes on main.\n- [ ] Recipe pages render Markdown as before (headings, lists, links)." }
   ]
 }
 ```

@@ -164,7 +164,11 @@ See `references/schemas.md` for the full schema (including the `assertions` fiel
 
 This section is one continuous sequence — don't stop partway through. Do NOT use `/skill-test` or any other testing skill.
 
-Put results in `<skill-name>-workspace/` as a sibling to the skill directory. Within the workspace, organize results by iteration (`iteration-1/`, `iteration-2/`, etc.) and within that, each test case gets a directory (`eval-0/`, `eval-1/`, etc.). Don't create all of this upfront — just create directories as you go.
+Put results in `<skill-name>-workspace/` as a sibling to the skill directory. Within the workspace, organize results by iteration (`iteration-1/`, `iteration-2/`, etc.) and within that, each test case gets a directory (`eval-0/`, `eval-1/`, etc.). Don't create all of this upfront: create directories as you go.
+
+If the skill lives in a folder of installed skills (such as `~/.claude/skills/`), a sibling workspace would sit among the user's live skills and fill their skills folder with test output. In that case put the workspace in your scratchpad directory if you have one, or another temporary folder, and tell the user where it is.
+
+Use this layout for every run, because the aggregation script and the viewer expect it: `<workspace>/iteration-<N>/eval-<name>/<config>/run-1/` holding `outputs/`, `timing.json`, and `grading.json`, where `<config>` is `with_skill`, `without_skill`, or `old_skill`. (Repeated runs of the same eval go in `run-2/`, `run-3/`, and so on.)
 
 ### Step 1: Spawn all runs (with-skill AND baseline) in the same turn
 
@@ -177,13 +181,18 @@ Execute this task:
 - Skill path: <path-to-skill>
 - Task: <eval prompt>
 - Input files: <eval files if any, or "none">
-- Save outputs to: <workspace>/iteration-<N>/eval-<ID>/with_skill/outputs/
-- Outputs to save: <what the user cares about — e.g., "the .docx file", "the final CSV">
+- Save outputs to: <workspace>/iteration-<N>/eval-<ID>/with_skill/run-1/outputs/
+- Outputs to save: <what the user cares about, e.g. "the .docx file", "the final CSV">
+- Finish with a short summary of what you did as your final message (or, if asked for a summary file, write it with Bash if the Write tool refuses: subagents are often not allowed to write report files with Write)
 ```
 
 **Baseline run** (same prompt, but the baseline depends on context):
-- **Creating a new skill**: no skill at all. Same prompt, no skill path, save to `without_skill/outputs/`.
-- **Improving an existing skill**: the old version. Before editing, snapshot the skill (`cp -r <skill-path> <workspace>/skill-snapshot/`), then point the baseline subagent at the snapshot. Save to `old_skill/outputs/`.
+- **Creating a new skill**: no skill at all. Same prompt, no skill path, save to `without_skill/run-1/outputs/`.
+- **Improving an existing skill**: the old version. Before editing, snapshot the skill (`cp -r <skill-path> <workspace>/skill-snapshot/`), then point the baseline subagent at the snapshot. Save to `old_skill/run-1/outputs/`.
+
+Once a skill is installed, a baseline subagent can still find and trigger it, which quietly turns the baseline into a with-skill run. Say so explicitly in every baseline prompt: "Do not use the <skill-name> skill" (and name any sibling skill that would do the same job). For an `old_skill` baseline, also say to use only the snapshot, not the installed version.
+
+**Skills that act on something stateful** (a repository, a server, a database, a board, files the skill edits): give every run its own fresh copy of the starting state, built by a script you keep in the skill (for example `scripts/make_fixture.py`), so runs cannot see or damage each other's work. Runs happen in parallel, so give each one its own ports and temporary folders (for example a distinct port range per run, named in its prompt), and ask every run to stop anything it starts. Otherwise parallel runs collide and the results describe the collision, not the skill.
 
 Write an `eval_metadata.json` for each test case (assertions can be empty for now). Give each eval a descriptive name based on what it's testing — not just "eval-0". Use this name for the directory too. If this iteration uses new or modified eval prompts, create these files for each new eval directory — don't assume they carry over from previous iterations.
 
@@ -200,13 +209,15 @@ Write an `eval_metadata.json` for each test case (assertions can be empty for no
 
 Don't just wait for the runs to finish — you can use this time productively. Draft quantitative assertions for each test case and explain them to the user. If assertions already exist in `evals/evals.json`, review them and explain what they check.
 
-Good assertions are objectively verifiable and have descriptive names — they should read clearly in the benchmark viewer so someone glancing at the results immediately understands what each one checks. Subjective skills (writing style, design quality) are better evaluated qualitatively — don't force assertions onto things that need human judgment.
+Good assertions are objectively verifiable and have descriptive names: they should read clearly in the benchmark viewer so someone glancing at the results immediately understands what each one checks. Subjective skills (writing style, design quality) are better evaluated qualitatively; don't force assertions onto things that need human judgment.
+
+Check that every assertion can fail. An assertion that passes whatever the output (an `or True` left in a grading script, a check against a file every run creates, a condition the baseline cannot miss) adds noise to the pass rate. Before trusting the benchmark, confirm each assertion fails on at least one real or deliberately broken output (a baseline run, or a copy of an output with the asserted property removed). If you change an assertion after seeing the results (because it turned out to expect the wrong behaviour), regrade every run with the new version and tell the user what changed and why.
 
 Update the `eval_metadata.json` files and `evals/evals.json` with the assertions once drafted. Also explain to the user what they'll see in the viewer — both the qualitative outputs and the quantitative benchmark.
 
 ### Step 3: As runs complete, capture timing data
 
-When each subagent task completes, you receive a notification containing `total_tokens` and `duration_ms`. Save this data immediately to `timing.json` in the run directory:
+When each subagent task completes, you receive a notification containing `total_tokens` and `duration_ms`. The subagent's own report may arrive as a separate message before that notification, and it does not contain these numbers: wait for the notification (the one with `subagent_tokens` or `total_tokens` and `duration_ms` in its usage block). Save this data immediately to `timing.json` in the run directory (`.../<config>/run-1/timing.json`):
 
 ```json
 {

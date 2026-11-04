@@ -50,6 +50,7 @@ import sys
 import time
 from pathlib import Path
 
+sys.dont_write_bytecode = True  # set before importing auditlib, so no cache lands in the skill
 from auditlib import (require_git, NO_HOOKS, approval_state, audit_lock, board_in_container, board_paths, default_branch,
                       ensure_gitignore, git,
                       key_regex, load_approvals, load_board, new_run_dir, prepare_worktree, remove_worktree, run_dirs)

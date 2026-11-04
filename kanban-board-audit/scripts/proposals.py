@@ -24,6 +24,7 @@ import datetime as dt
 import json
 import sys
 
+sys.dont_write_bytecode = True  # set before importing auditlib, so no cache lands in the skill
 from auditlib import board_paths, run_dirs
 
 
