@@ -117,7 +117,7 @@ So `Mod3_Item_3_10_notes.md` for item 3.10. Use underscores between words and Ti
 Use this shape. Adapt the number of section 1 blocks to the item, but keep all five headings present, because each one does a job in the reader's revision process.
 
 ```markdown
-# Module <n> · Item <x.y> · <syllabus wording, condensed>
+# Module <n> · Item <x.y> · <the full syllabus wording of the item>
 
 ## Cover and recall
 
@@ -154,9 +154,26 @@ Answer these <three or four> cold, before you read anything below.
 
 Nothing goes between the title and the cover-and-recall block. In particular there is no exam evidence block, no certainty target, no verification line, no provenance table and no "my own hooks" section: the cover-and-recall block does the first job, the structure of section 1 does the second, and the other three have been dropped by request.
 
+**The title carries the full syllabus wording, verbatim.** Never a shortened or paraphrased form. Extract the item from the syllabus PDF, capitalise the first letter, drop the trailing full stop, italicise the binomial names and replace any en dash with a colon. "The spoilage of honey, particularly by fermentation" is wrong for item 2.13; the full wording includes "(including the effect of water content, storage temperature and the presence of yeast)", which tells the reader the scope of the item.
+
+## Verify facts against a primary source
+
+Do not check a fact against another file in the repository, because material drifts consistently across a notes file, its recap and its deck. All three can be wrong together, and in this project they were. Check against:
+
+- the **module syllabus PDF**, for the item's scope;
+- the **NBU advisory leaflets and fact sheets** on nationalbeeunit.com, for disease, hive and legal guidance;
+- **legislation.gov.uk**, for statutory instruments, article numbers and amendment histories;
+- the **VMD product information database**, for authorised medicines, actives and directions;
+- the **National Honey Show's current schedule of competitive classes**, for every show specification;
+- the relevant **textbook**, where no primary source exists.
+
+Where a claim cannot be settled, **keep it and mark it** rather than deleting it, because it is widely taught and may well be credited. Mark it in the prose, add a bullet to section 4, and say so in your report. The word "unverified" in a note is doing useful work, not admitting defeat.
+
 ## Quality checklist before finishing
 
-- Exactly one syllabus item is covered, with its number and wording stated in the title.
+- Exactly one syllabus item is covered.
+- The title carries the **full** syllabus wording, verified word by word against the syllabus PDF, not a condensed form.
+- Every fact checked against a primary source, or marked uncertain with a section 4 bullet.
 - A cover-and-recall block of three or four questions comes before section 1.
 - Section 1 is narrative: prose paragraphs that explain the material, with tables or numbered lists where recall needs them. Not a bullet list of facts.
 - Section 1 covers the whole syllabus item, including anything never examined.

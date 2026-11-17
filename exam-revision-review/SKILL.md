@@ -78,6 +78,26 @@ The recap is a **recall tool**, not a second set of notes. The notes carry the e
 
 Length: a substantial section of the syllabus justifies a substantial document, typically 300 to 600 lines. Do not pad a narrow topic out artificially, and do not truncate a broad one to the point that it is not examinable.
 
+### 4a. Write the recap from the item notes, and check it back against them
+
+The item notes carry the researched material; the recap carries the recall skeleton. So:
+
+- **Every fact in the recap must be in the notes.** A fact that appears only in the recap has
+  not been taught, cannot be checked, and will be half-remembered.
+- **Everything the notes teach that matters must be in the recap**, especially a figure, a
+  threshold, a named list, a legal reference, a sequence step or a discriminator.
+- **Where a note marks something uncertain**, with "not certain" or "unverified", the recap
+  must carry the same marking or not state the claim. Never assert a doubtful fact as settled.
+- **The notes are the authority for the recap, but check the notes too.** Do not verify a
+  figure against the recap, because material drifts consistently across a notes file, its
+  recap and its deck, and all three can be wrong together. Compare numbers literally rather
+  than by eye: dates, temperatures, percentages, dosages, durations, distances, counts,
+  thresholds, legal citations and product names are the highest-risk items.
+- Primary sources for checking a note as well as a recap: the NBU advisory leaflets and fact
+  sheets on nationalbeeunit.com, legislation.gov.uk for statutory instruments, the VMD product
+  information database for authorised medicines, and the National Honey Show's current
+  schedule for show specifications.
+
 ### 5. Never refer to past exam questions in the body of the recap
 
 The body of the recap must contain:

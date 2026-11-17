@@ -71,15 +71,28 @@ Because the cards carry no exam framing, the tags are the only place the weighti
 
 ## TSV format
 
-Three fields, tab separated, no header row, one card per line:
+Four tab separated fields per line, one card per line, under four import header lines:
 
 ```
-Front<TAB>Back<TAB>Tags
+#separator:Tab
+#html:false
+#tags column:3
+#deck column:4
+Front<TAB>Back<TAB>Tags<TAB>BBKA Module 3
 ```
+
+The header lines are mandatory, because without them Anki ignores the file's structure and the user has to fix the mapping by hand every time:
+
+- `#tags column:3` makes Anki read column 3 as tags. Without it the tags land in a field or are dropped.
+- `#deck column:4` makes Anki read column 4 as the deck for that note, and **creates the deck if it does not exist**. This is the only header that creates a deck: a plain `#deck:BBKA Module 3` line merely presets the deck if it happens to exist already, and otherwise the cards fall into whatever the import dialog says, which is `Default`. That is the bug this arrangement exists to prevent.
+- `#html:false` keeps the plain text as plain text. Drop it if the deck ever carries real HTML such as `<br>`.
+- `#separator:Tab` is the default, but stating it removes any doubt about what is separating the fields.
+
+Column 4 repeats the deck name on every row, which is what makes the deck get created. The deck name is `BBKA Module <n>`, one deck per module, so the user selects a module to study and filters within it by tag.
 
 Hard requirements, because breaking any of them corrupts the import:
 
-- **Exactly three tab separated fields per line.** Verify this before finishing.
+- **Exactly four tab separated fields per line, after the four header lines.** Verify this before finishing.
 - **No tab characters inside any field.** Use semicolons or commas for internal separation.
 - **No newlines inside any field.** Every card is a single line. If an answer needs stages, put them on one line as a numbered list.
 - **No empty fields.**
@@ -87,7 +100,7 @@ Hard requirements, because breaking any of them corrupts the import:
 - **UTF-8, no byte order mark.**
 - **Plain text in the fields.** Do not wrap scientific names in asterisks: Anki will not render markdown by default, so they will display as stray asterisks. Write `Varroa destructor` in plain text and tell the user, once, that italics can be restored by adding `em { font-style: italic; }` to their card template CSS.
 
-The reliable way to author this file is to write it with a single distinctive placeholder character in place of the tabs, for example `@`. Before converting, confirm the placeholder does not already appear anywhere in the content:
+The reliable way to author this file is to write it with a single distinctive placeholder character in place of the tabs, for example `@`, including the header lines and the deck column. Before converting, confirm the placeholder does not already appear anywhere in the content:
 
 ```bash
 grep -c '@' deck.tsv
@@ -102,11 +115,11 @@ tr '@' '\t' < deck.tsv > /tmp/deck.tsv && mv /tmp/deck.tsv deck.tsv
 Verify the result:
 
 ```bash
-awk -F'\t' '{print NF}' deck.tsv | sort | uniq -c
-cut -f1 deck.tsv | sort | uniq -d
+grep -v '^#' deck.tsv | awk -F'\t' '{print NF}' | sort | uniq -c
+grep -v '^#' deck.tsv | cut -f1 | sort | uniq -d
 ```
 
-Expect a single field count equal to the number of cards, and no duplicate fronts. Fix anything that fails rather than handing over a broken file.
+Expect a single field count equal to four, and no duplicate fronts. Fix anything that fails rather than handing over a broken file.
 
 ## Tagging
 
@@ -147,8 +160,9 @@ Where a module has been split into lettered blocks, use the recap's section lett
 In your reply, give the user:
 
 - The file path and the card count.
+- The deck name the cards will land in, and the fact that Anki creates it on import.
 - The tag breakdown, so they can see the coverage.
-- A note that Anki's "Allow HTML in fields" does not matter here, since the fields are plain text.
+- A note that Anki's "Allow HTML in fields" does not matter here, since the fields are plain text and `#html:false` says so in the file.
 - The one-off italics tip, if the deck contains scientific names.
 - Any volatile cards, called out by tag, with a reminder to re-check those facts rather than trust the card.
 
@@ -162,7 +176,9 @@ British English, Oxford commas, no en dashes or em dashes, even inside card text
 - No card's front can be answered without producing the specific content.
 - No card's back is a paragraph of unrelated facts.
 - Essay material has been decomposed into component facts plus an assembly card.
-- Exactly three tab separated fields on every line, verified with `awk`.
+- Exactly four tab separated fields on every line after the header lines, verified with `awk`.
+- The four import header lines are present, in order, with `#tags column:3` and `#deck column:4`.
+- Column 4 holds `BBKA Module <n>` on every row, so Anki creates the deck rather than dropping the cards into `Default`.
 - No duplicate fronts, verified with `cut` and `uniq -d`.
 - No tabs or newlines inside fields, no quotes, no markdown asterisks, no BOM.
 - Every card tagged with module and topic block, exam-derived cards tagged `PastPaper`.
