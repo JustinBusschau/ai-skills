@@ -1,6 +1,6 @@
 ---
 name: exam-revision-review
-description: Build a syllabus-mapped revision recap with a self-testing Q&A for a BBKA written examination module or a named section of one, saved as a markdown file the user can return to. Use when the user asks to revise, recap, review or prepare for a BBKA Module 1, 2, 3 or other exam sitting, asks for a revision session, revision notes, a study recap, a topic summary, a Q&A to test comprehension, or asks to cover a particular section such as foulbrood, varroa, invasive species, honey constituents, forage, pollination, honey granulation, beeswax, poisoning or legislation. Also use when the user names a study block, a week of the study plan, or a past paper question they want covered.
+description: Build a syllabus-mapped revision recap with a self-testing Q&A for a BBKA written examination module or a named section of one, saved as a markdown file the user can return to. Use when the user asks to revise, recap, review or prepare for a BBKA Module 1, 2, 3 or other exam sitting, asks for a revision session, study recap, topic summary, Q&A to test comprehension, or asks to cover a particular section such as foulbrood, varroa, invasive species, honey constituents, forage, pollination, honey granulation, beeswax, poisoning or legislation. Also use when the user names a study block, a week of the study plan, or a past paper question they want covered. For per-item narrative notes use exam-revision-notebook-notes; for the condensed recall sheet use exam-revision-revision-notes.
 ---
 
 ## When to use
@@ -16,11 +16,19 @@ Do not use this skill for a single factual question ("what is the causative orga
 
 If the user already has a recap file and wants changes to it, edit that file in place rather than rebuilding it, unless they ask for a fresh pass.
 
-## When to use the companion skill
+## The five outputs
 
-This skill produces the review document. An Anki deck is a separate deliverable with a separate skill, because the user reviews cards daily over weeks and may want to regenerate them without regenerating the recap.
+This skill produces the recap only. The other four outputs have their own skills, because the user regenerates them on different schedules and may want one without the others:
 
-**Always ask at the start of the session whether an Anki deck should be prepared.** If the user says yes, invoke the `exam-revision-anki-deck` skill once the recap file is written, and pass it the recap file path. If they say no, or "later", finish the recap and mention that the deck skill can be run against the saved file at any time.
+| Output | Skill | File |
+|---|---|---|
+| Narrative notes for each syllabus item | `exam-revision-notebook-notes` | `Mod<n>_Item_<x.y>_notes.md` |
+| Condensed facts and traps for each item | `exam-revision-revision-notes` | `Mod<n>_Item_<x.y>_revision-notes.md` |
+| Block recap and Q&A | **this skill** | `Mod<n>_<Letter>_<Topic>_recap.md` |
+| Single-point Anki cards for the block | `exam-revision-anki-deck` | `Mod<n>_<Letter>_<Topic>_anki.tsv` |
+| Study-group presentation for the block | `exam-revision-marp-deck` | `Mod<n>_<Letter>_<Topic>_marp.md` |
+
+Read `Revision-Output-Standard.md` in the study-plan repository before starting a batch. At the end of the session, say which companion skills can be run against the saved file; if the user asks for a full five-output pass, run them in that order, with this recap written first.
 
 ## What to do
 
@@ -31,9 +39,9 @@ Ask for, in one message using the question tool where possible:
 - **Which exam and module.** Module 1, 2, 3, or another examination such as a Basic or Intermediate assessment. Confirm the sitting date, since that determines which facts go stale and how soon the recap will.
 - **Which section or topic.** Offer a menu drawn from the actual syllabus in the repository, not a generic list.
 - **How deep.** A full syllabus-mapped recap, a rapid refresher, or a Q&A only.
-- **Whether an Anki deck should be prepared.**
+- **Which of the companion outputs are wanted** (notes, revision notes, Anki deck, marp deck), unless the user has already asked for all five.
 
-If the user has already named a topic and asked for a full treatment, do not interrogate them further. Confirm the deck question and proceed.
+If the user has already named a topic and asked for a full treatment, do not interrogate them further. Proceed to the recap, then offer or run the companion skills as requested.
 
 ### 2. Read the source material
 
@@ -44,11 +52,11 @@ Work from the repository. Do not rely on memory for the recap.
 - **Past papers.** Extract every paper for the module in `Past Exams/MODULE n/` and work out what has been examined. **This is for your own preparation, not for the document.** It tells you which facts are safe, which phrasings the examiner prefers, and which self-test questions will be realistic. It does not appear in the recap, except in the evidence table at the end (see below).
 - **Reading list.** Check the current module reading list PDF (search the module's folder for a filename containing "Reading List") so the recap can point at the right textbook chapters.
 
-### 3. Verify anything that can go stale
+### 3. Date the facts that move, and let the BBKA settle disagreements
 
-Some syllabus areas are frozen (the biology of a life cycle) and some are live (regulations, import suspensions, outbreak figures, resistance status). Live areas are where confidence is misplaced, because the answer may have changed since the model last saw it.
+Some syllabus areas are frozen (the biology of a life cycle) and some change (regulations, import suspensions, outbreak figures, resistance status). For the second group, state the fact plainly and give it a currency line in the recap: `**Currency:** Time-sensitive facts in this recap are current at <the full date you write it>.` Do not add a "Volatile facts", "re-check before the exam" or "verify in the final week" section. The old standard is gone.
 
-Identify these before writing, then confirm each against the primary source:
+Identify time-sensitive facts before writing, then confirm each against the primary source where the source is reachable:
 
 - Legislation, statutory instruments, amendment dates, notification duties
 - Current import restrictions and safeguard measures
@@ -56,9 +64,11 @@ Identify these before writing, then confirm each against the primary source:
 - Approved veterinary medicines, and the resistance status of varroacides
 - Any syllabus or paper format change announced for the target sitting
 
-Prefer primary sources: `gov.uk`, `legislation.gov.uk`, `nationalbeeunit.com`, the FAO or WOAH site for international status, and the `dev.defra.gov.uk` or `planthealth.blog` pages. Collect them into a closing "Volatile facts to re-verify before [date]" section listing exactly which facts to re-check in the final week, with the source to check each against.
+Prefer primary sources: `gov.uk`, `legislation.gov.uk`, `nationalbeeunit.com`, the FAO or WOAH site for international status, and the `dev.defra.gov.uk` or `planthealth.blog` pages.
 
-If a primary source cannot be reached (no network access, the site is down, the page has moved), do not fall back on memorised knowledge and present it as checked. Include the fact only if it is still worth including, mark it plainly in the volatile section as "not verified this session" rather than giving it a source citation, and say so in your reply so the user knows which facts still need a human check before relying on them.
+**Where a BBKA source and another source disagree on an examinable fact, the BBKA wins.** It is the exam board and sets the questions. Teach the BBKA answer in the recap, with at most a brief aside about the other version where it prevents confusion. Never leave a conflict unresolved as "check which source to quote", and never present two competing answers as equally acceptable.
+
+If a primary source cannot be reached (no network access, the site is down, the page has moved), do not present a remembered fact as checked. Include it only if still worth including, mark it plainly in the prose as **unverified**, and say so in your reply. Marking it in prose is not the same as a volatile section: the currency line still says when the material was written.
 
 ### 4. Structure the recap
 
@@ -67,6 +77,7 @@ The recap is a **recall tool**, not a second set of notes. The notes carry the e
 - **Title, then straight into the syllabus coverage table.** No introductory paragraph, no "revision recap for the November sitting" line, no list of primary sources. The table is the first thing in the document.
 - **Syllabus coverage, always as a table, never as prose.** A table with the columns Item, Requirement and Section below (or Where covered). Quote or closely paraphrase each syllabus item and point at the numbered part of the recap that answers it. A topic that maps to a single item still gets a table, even with one row. Note any nearby items deliberately left out, so a gap reads as a decision rather than an oversight. **This table holds no information that is not in the body of the recap**, so it can be checked off item by item.
 - **A cover-and-recall block** after the coverage table: the three to five questions that, answered cold, mean the block is known. One line of instruction, then the questions.
+- **A currency line** after the cover-and-recall block when the block contains time-sensitive facts: `**Currency:** Time-sensitive facts in this recap are current at <full date>.` No section, no list of things to re-check.
 - **The recap itself: tables and lists, not prose.** This is the defining rule. Set the material out as tables, numbered lists and short bulleted skeletons. Where a set of facts only makes sense as a running account, and compressing it would lose something the reader needs, give **brief narrative** as well, but narrative is the exception, not the default. A good test: if a reader can reconstruct the answer from the table alone, the narrative is padding.
 - **Organise by syllabus item, not by textbook chapter.** Number the blocks so the reader can tick them off against the syllabus.
 - **Show the look-alikes and discriminators explicitly.** A table of discriminators is worth more than a paragraph of description: small hive beetle against wax moth, *Tropilaelaps* against *Varroa*, *Vespa velutina* against *Vespa crabro*, *Nosema ceranae* against *Nosema apis*, and so on.
@@ -88,6 +99,9 @@ The item notes carry the researched material; the recap carries the recall skele
   threshold, a named list, a legal reference, a sequence step or a discriminator.
 - **Where a note marks something uncertain**, with "not certain" or "unverified", the recap
   must carry the same marking or not state the claim. Never assert a doubtful fact as settled.
+- **Where the notes show a disagreement between the BBKA and another source**, the recap must
+  teach the BBKA version as the answer, not list both as options and not ask the reader to check
+  which one the paper wants.
 - **The notes are the authority for the recap, but check the notes too.** Do not verify a
   figure against the recap, because material drifts consistently across a notes file, its
   recap and its deck, and all three can be wrong together. Compare numbers literally rather
@@ -135,7 +149,9 @@ British English throughout, including scientific and common names of organisms. 
 - A cover-and-recall block follows the coverage table.
 - The body is tables, lists and skeletons; any narrative is short and earns its place.
 - The past paper evidence table is at the bottom, with no commentary attached to it.
-- Every live fact is either verified this session against a primary source, or explicitly marked in the volatile section as not verified this session, with that distinction stated in the reply. None are silently presented as checked when they were only recalled.
+- Time-sensitive facts are covered by one `Currency: ... current at <date>` line after the cover-and-recall block, with no "volatile" or "re-check before the exam" wording and no separate section for them.
+- Every live fact is verified against a primary source where reachable, or marked **unverified** in the prose, with that distinction stated in the reply. None are silently presented as checked when they were only recalled.
+- Where sources disagree, the BBKA answer is taught as the answer.
 - Lists are numbered where the count matters.
 - Numbers appear in bold.
 - Discriminators between similar species or diseases are in tables.
