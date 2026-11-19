@@ -1,0 +1,30 @@
+/* brand-id: personal
+   name: Personal revision
+   description: No logo; honey amber and charcoal on warm cream, for study-group decks
+   meta-line: Personal revision
+   logo: none
+ */
+:root {
+  --font: Arial, Helvetica, sans-serif;
+  --paper: #FFFDF7;
+  --ink: #575A57;
+  --ink-strong: #2E3230;
+  --muted: #92938F;
+  --heading: #9A6516;
+  --primary: #2E3230;
+  --on-primary: #FFFDF7;
+  --on-primary-muted: #D5D4CF;
+  --accent: #C8892B;
+  --tint: #F5E8D2;
+  --tint-ink: #2E3230;
+  --rule: #DFDED9;
+  --zebra: #F7F5F0;
+  --title-rule: #C8892B;
+  --title-rule-width: 3px;
+  --neutral-head: #ABABA7;
+  --logo: none;
+  --logo-on-dark: none;
+  --logo-width: 0px;
+  --decor-image: none;
+  --footer-label: "Study group";
+}

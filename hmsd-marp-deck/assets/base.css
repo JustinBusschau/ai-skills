@@ -107,3 +107,12 @@ section.statement[data-marpit-pagination]::after { color: var(--on-primary-muted
 section.statement h2 { color: var(--on-primary); font-size: 34px; line-height: 1.3; margin: 0 0 22px; }
 section.statement strong { color: var(--accent); }
 section.statement p { color: var(--on-primary-muted); font-size: 19px; }
+
+/* Optional personal-brand decorative image, never a logo: used only when a
+   deck's title or divider slide carries the "personal-decor" class. */
+section.personal-decor {
+  background-image: var(--decor-image, none), var(--logo-on-dark);
+  background-size: cover, calc(var(--logo-width) * 1.6) auto;
+  background-position: center, right 40px bottom 16px;
+  background-repeat: no-repeat;
+}

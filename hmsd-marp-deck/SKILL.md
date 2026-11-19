@@ -1,6 +1,6 @@
 ---
 name: hmsd-marp-deck
-description: Builds a branded Marp slide deck for Hi Mum Said Dad (HMSD) from the context in an existing research repository or folder, renders it to HTML and PDF, and checks every slide for overflow before handing it back. Asks which of the bundled brands to apply (such as the HMSD yellow and charcoal brand, or the green L.E.K. and HMSD co-brand) and which optional title, closing, and section separator slides to include. Produces dense consulting-style slides: one-line titles, heading bullets, branded tables, takeaway callouts, Mermaid diagrams beside the text, option cards, and statement slides. Use when asked to make, draft, or build a presentation, deck, slides, or Marp deck from a repo, folder, research notes, or project documents, or to "turn this research into slides", for HMSD, L.E.K., or their clients. Also use when asked to rebrand, restyle, or switch the brand of a deck this skill made, or to refresh one after the skill's stylesheet changes.
+description: Builds a branded Marp slide deck from the context in an existing research repository or folder, renders it to HTML and PDF, and checks every slide for overflow before handing it back. Asks which of the bundled brands to apply (the HMSD yellow and charcoal brand, the green L.E.K. and HMSD co-brand, or a logo-free personal brand whose colours, footer and optional decorative image are prompted for) and which optional title, closing, and section separator slides to include. Produces dense consulting-style slides: one-line titles, heading bullets, branded tables, takeaway callouts, Mermaid diagrams beside the text, option cards, and statement slides. Use when asked to make, draft, or build a presentation, deck, slides, or Marp deck from a repo, folder, research notes, or project documents, or to "turn this research into slides", for HMSD, L.E.K., their clients, or personal study material. Also use when asked to rebrand, restyle, or switch the brand of a deck this skill made, or to refresh one after the skill's stylesheet changes.
 ---
 
 # HMSD Marp deck
@@ -13,14 +13,17 @@ striped rows, a tinted takeaway callout at the foot of most slides, Mermaid
 diagrams in a column beside the text, and a footer with the page number,
 "Confidential" (or another footer label), and the brand's logo.
 
-The look is the same for every brand; the brand sets the colours and logos.
-The brands are the folders under `assets/brands/`, and
+The look is the same for every brand; the brand sets the colours and, where it
+has one, the logo. The brands are the folders under `assets/brands/`, and
 `scripts/new_deck.sh --list` prints each one's id, name, and description, so
-always take the list from there rather than from memory. The first two were
-`hmsd` (Hi Mum Said Dad: charcoal and yellow, with the "Hi mum! said dad"
-wordmark) and `lek-hmsd` (the L.E.K. and Hi Mum Said Dad co-brand: LEK green,
-with the Hi and LEK logos side by side); "Adding a brand" at the end explains
-how to add more.
+always take the list from there rather than from memory. The three shipped ones
+are `hmsd` (Hi Mum Said Dad: charcoal and yellow, with the "Hi mum! said dad"
+wordmark), `lek-hmsd` (the L.E.K. and Hi Mum Said Dad co-brand: LEK green, with
+the Hi and LEK logos side by side), and `personal` (no logo, a prompted colour
+palette and footer, for personal and study-group decks); "Adding a brand" at
+the end explains how to add more. A logo-bearing brand is the right choice for
+an organisation. Do not add a logo to `personal`: if a deck needs a wordmark,
+make a separate, specifically named brand for it.
 
 The bundled files do the mechanical work, so the effort goes into the content:
 
@@ -74,11 +77,13 @@ question explicitly ("co-branded with LEK", "no title slide", "save it in
 again.
 
 1. **Brand**: "Which brand should the deck use?" One option per brand from
-   the list, labelled with its name and described with its description. Do
-   not mark one as recommended unless the request or source points to it
-   (for example, a joint L.E.K. engagement suggests the co-brand). If there
-   are more than four brands, offer the four most likely and say in the
-   question that the others can be typed through "Other".
+   the list, labelled with its name and described with its description. Offer
+   `personal` alongside the organisation brands even for work material: it is
+   the right choice for revision decks and other personal documents. Do not
+   mark one as recommended unless the request or source points to it (a joint
+   L.E.K. engagement suggests the co-brand, a study-group recap suggests
+   `personal`). If there are more than four brands, offer the four most likely
+   and say in the question that the others can be typed through "Other".
 2. **Optional slides** (multiSelect): "Which optional slides should the deck
    include?" Options: title slide at the start, closing slide at the end,
    section separator slides between the main parts. Say in the descriptions
@@ -99,7 +104,31 @@ again.
 The footer reads "Confidential" on every slide unless told otherwise. Do not
 add a fifth question for it, but if the request says the deck is for public
 or open distribution, or names a client the footer should mention, set the
-label in Step 5 and confirm it in the hand back.
+label in Step 5 and confirm it in the hand back. The `personal` brand's own
+default is "Study group", which Step 5 sets through the brand configuration.
+
+### When the personal brand is chosen
+
+The personal brand has no logo by design. Do not add one, even if the user
+mentions an organisation in passing: a logo-bearing variant should be its own
+named brand. Before Step 5, ask for the branding guidance in one call, unless
+the user has already given it in this conversation:
+
+1. **Palette**: offer two or three concrete palettes with hex values (for
+   example, honey amber on charcoal and warm cream, or heather on cream) and
+   allow the user to type their own hex colours. The choices needed are the
+   dark slide colour, the heading colour, the paper colour and the accent.
+2. **Decorative image**: ask whether to use a subtle decorative image or
+   colours only. Make "colours only" the default. Never call an image a logo.
+   If one is supplied, ask for its path and use it only on title and divider
+   slides through the `personal-decor` class.
+3. **Footer label**: offer "Study group", "Personal revision" and no label.
+
+Apply the answers by running `~/.claude/skills/hmsd-marp-deck/scripts/configure_personal_brand.py`
+with the chosen colours, footer, and optional `--decor-image` before running
+`new_deck.sh`. The script rewrites only `assets/brands/personal/brand.css` and
+copies a decorative image into its folder. Confirm what it printed in the
+hand back, so the user knows which palette the deck actually uses.
 
 Apply the answers exactly. If the user declines separators, do not smuggle the
 same effect in with statement slides used as dividers. If the user says the
@@ -215,7 +244,7 @@ Write the deck to the location confirmed in Step 1 (by default
 `<source>/slides/<subject-slug>.md`, with diagrams in `slides/diagrams/`).
 Never overwrite an existing file without asking: check the `.md` path yourself
 before writing it. `render.sh` protects everything else it writes (HTML, PDF,
-and diagram SVGs) by recording its own outputs in `.hmsd-render-manifest`
+and diagram SVGs) by recording its own outputs in `.render-manifest`
 beside the deck and refusing, with exit code 4, to replace any file that is
 not listed there. When it refuses, show the user the files it named and ask
 whether to move them, pick another deck name, or rerun with `--force`; never
@@ -224,13 +253,16 @@ pass `--force` without that answer.
 1. Start the deck with the brand the user chose:
    `~/.claude/skills/hmsd-marp-deck/scripts/new_deck.sh <brand-id> <deck.md>`.
    It writes the front matter and the branded stylesheet, and copies the
-   logos into `brand/<brand-id>/` beside the deck. It exits 4 rather than
-   overwrite an existing deck or a logo file it did not create; ask the user
+   brand's asset files, if any, into `brand/<brand-id>/` beside the deck. A
+   no-logo brand copies nothing. It exits 4 rather than overwrite an existing
+   deck or a brand file it did not create; ask the user
    what to do, as below. Never write the header by hand, and do not edit the
    stylesheet per deck: if a layout seems to need new CSS, use the closest
    existing layout instead. The one exception is the footer label, which the
    user may ask to change (for example, to "Prepared for Acme | Confidential"):
-   change only the `--footer-label` value in the deck's `:root` block.
+   change only the `--footer-label` value in the deck's `:root` block. For the
+   personal brand, change the brand file with `configure_personal_brand.py`
+   instead when the user wants a different palette or label across decks.
    To change the brand of a deck that already exists, or to pick up a newer
    `base.css`, follow "Rebranding or refreshing an existing deck" above.
 2. Append slides after the header's final comment: the first slide directly
@@ -297,8 +329,9 @@ Then verify, and do not report the deck as finished until all of these hold:
 2. **The previews look right.** Open the PNGs in `.preview/` with the Read
    tool. Look at every slide for decks of up to 20 slides; for longer decks,
    look at every table, diagram, and `cols` slide and a sample of
-   the rest. Check that the brand's logo shows at the bottom right of every
-   slide and its colours are the ones the user chose, that diagrams are
+   the rest. Check that any brand logo shows at the bottom right of every
+   slide (the `personal` brand has none by design, so check its absence), that
+   the colours are the ones the user chose, that diagrams are
    legible and in the house style (monospace labels, white or pastel boxes,
    not Mermaid's default purple fill), that nothing overlaps the footer, that
    column layouts leave the text enough room, and that the title, closing,
@@ -306,7 +339,7 @@ Then verify, and do not report the deck as finished until all of these hold:
 3. **Slide count and order** match the approved outline.
 
 Delete the `.preview/` folder once you have finished looking, unless the user
-wants the images. Leave `.hmsd-render-manifest` in place: later runs need it
+wants the images. Leave `.render-manifest` in place: later runs need it
 to know which files they may safely replace.
 
 ## Step 7: Hand back
@@ -322,8 +355,8 @@ Tell the user, briefly:
   slides can reflow and overflow even though the check passed here.",
 - the brand applied, the slide count (content slides and optional slides
   separately), the sections, and which optional slides were included,
-- the footer label on every slide ("Confidential" by default), and that it
-  can be changed on request,
+- the footer label on every slide ("Confidential" by default, "Study group"
+  for the shipped personal brand), and that it can be changed on request,
 - anything left unverified: claims marked "to confirm", diagrams you redrew
   rather than reused, diagrams copied as images that are not in the house
   diagram style, or an overflow check that could not run,
@@ -343,10 +376,15 @@ To add a brand (for example, LEK on its own), create
   (`brand-id`, `name`, `description`, and `meta-line`, the organisation name
   used on title and closing slides) and the token values. Keep every token
   name: `base.css` uses them all. The logo URLs must point at
-  `brand/<brand-id>/`.
+  `brand/<brand-id>/` unless the brand uses `none`.
 - `logo.svg` for white and tinted slides, and `logo-on-dark.svg` for slides in
   the brand's primary colour. Prefer true vector logos; images embedded
-  through SVG masks can fail to appear in the PNG previews.
+  through SVG masks can fail to appear in the PNG previews. For a logo-free
+  brand, put `logo: none` in the header, set `--logo` and `--logo-on-dark` to
+  `none`, and provide no logo files. Prompts for colours and footer values can
+  be applied with `scripts/configure_personal_brand.py`, which owns the
+  `personal` brand folder. Optional decorative images are listed in an
+  `extra:` header field and used with the `personal-decor` slide class.
 
 Then start a test deck with `new_deck.sh <brand-id>`, paste in a few slides
 from `references/layouts.md`, render it with `--png --pdf`, and look at every

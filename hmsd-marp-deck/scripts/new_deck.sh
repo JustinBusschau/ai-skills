@@ -10,7 +10,9 @@
 # from the comment at the top of assets/brands/<id>/brand.css.
 #
 # Otherwise it:
-# 1. Copies the brand's logos into brand/<brand-id>/ beside the deck.
+# 1. Copies the brand's logos into brand/<brand-id>/ beside the deck, unless
+#    the brand declares "logo: none" in its header (a no-logo brand such as
+#    personal, which uses colours and optional decorative images instead).
 # 2. Writes <deck.md> with the Marp front matter and one <style> block made of
 #    the brand's tokens followed by the shared assets/base.css. Slides are
 #    then appended after the header's final comment.
@@ -27,11 +29,13 @@
 # It never overwrites a file it did not create: the deck must not already
 # exist (except with --restyle, which changes only its <style> block), and an
 # existing logo copy is replaced only when it is identical or
-# listed in .hmsd-render-manifest (the same record render.sh keeps).
+# listed in .render-manifest (the same record render.sh keeps).
 #
 # Adding a brand means adding a folder under assets/brands/ holding brand.css
 # (with the same comment header and tokens as the others), logo.svg for light
-# backgrounds, and logo-on-dark.svg for brand-coloured ones.
+# backgrounds, and logo-on-dark.svg for brand-coloured ones. For a brand with
+# no logo, add "logo: none" to the header and set --logo and --logo-on-dark to
+# none; the script then skips both logo files.
 #
 # Exit codes: 0 done, 2 usage error or unknown brand, 4 refused to overwrite
 # (or to restyle a deck it did not start).
@@ -71,7 +75,12 @@ if [[ ! -f "$src/brand.css" ]]; then
   list_brands >&2
   exit 2
 fi
-for f in logo.svg logo-on-dark.svg; do
+no_logo() { [[ "$(field "$src/brand.css" logo)" == "none" ]]; }
+brand_files=()
+no_logo || brand_files+=(logo.svg logo-on-dark.svg)
+extra="$(field "$src/brand.css" extra)"
+[[ -n "$extra" ]] && brand_files+=("$extra")
+for f in ${brand_files[@]+"${brand_files[@]}"}; do
   [[ -f "$src/$f" ]] || { echo "brand $brand is missing $f" >&2; exit 2; }
 done
 [[ "$deck" == *.md ]] || { echo "the deck path must end in .md: $deck" >&2; exit 2; }
@@ -92,13 +101,18 @@ fi
 
 mkdir -p "$(dirname "$deck")"
 deck_dir="$(cd "$(dirname "$deck")" && pwd)"
-manifest="$deck_dir/.hmsd-render-manifest"
+manifest="$deck_dir/.render-manifest"
+# Older versions of this skill used a brand-specific manifest name. Migrate it
+# once so existing decks keep their render history without a manual step.
+if [[ ! -e "$manifest" && -e "$deck_dir/.hmsd-render-manifest" ]]; then
+  mv "$deck_dir/.hmsd-render-manifest" "$manifest"
+fi
 touch "$manifest"
 in_manifest() { grep -Fxq "$1" "$manifest"; }
 
 # Refuse before copying anything if a logo copy would replace someone else's file.
 conflicts=()
-for f in logo.svg logo-on-dark.svg; do
+for f in ${brand_files[@]+"${brand_files[@]}"}; do
   rel="brand/$brand/$f"
   dest="$deck_dir/$rel"
   if [[ -e "$dest" ]] && ! cmp -s "$src/$f" "$dest" && ! in_manifest "$rel"; then
@@ -111,13 +125,17 @@ if (( ${#conflicts[@]} > 0 )); then
   exit 4
 fi
 
-mkdir -p "$deck_dir/brand/$brand"
-for f in logo.svg logo-on-dark.svg; do
-  rel="brand/$brand/$f"
-  cp "$src/$f" "$deck_dir/$rel"
-  in_manifest "$rel" || echo "$rel" >> "$manifest"
-done
-echo "logos: $deck_dir/brand/$brand/"
+if (( ${#brand_files[@]} == 0 )); then
+  echo "no-logo brand: no files copied beside the deck"
+else
+  mkdir -p "$deck_dir/brand/$brand"
+  for f in ${brand_files[@]+"${brand_files[@]}"}; do
+    rel="brand/$brand/$f"
+    cp "$src/$f" "$deck_dir/$rel"
+    in_manifest "$rel" || echo "$rel" >> "$manifest"
+  done
+  echo "brand assets: $deck_dir/brand/$brand/"
+fi
 
 [[ "$mode" == assets ]] && exit 0
 

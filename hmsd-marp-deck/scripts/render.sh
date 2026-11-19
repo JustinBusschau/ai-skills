@@ -12,7 +12,7 @@
 # 4. Runs check_overflow.mjs and reports slides that overflow.
 #
 # It never overwrites a file it did not create. Every file it writes is listed
-# in .hmsd-render-manifest beside the deck; an existing output that is not in
+# in .render-manifest beside the deck; an existing output that is not in
 # that list (a hand-made export, or an SVG copied in from elsewhere) stops the
 # run before anything is written, unless --force is given.
 #
@@ -67,7 +67,12 @@ if (( ${#missing[@]} > 0 )); then
   echo "restore them with: $here/new_deck.sh $brand_id $deck --assets-only" >&2
   exit 2
 fi
-manifest="$deck_dir/.hmsd-render-manifest"
+manifest="$deck_dir/.render-manifest"
+# Older versions of this skill used a brand-specific manifest name. Migrate it
+# once so existing decks keep their render history without a manual step.
+if [[ ! -e "$manifest" && -e "$deck_dir/.hmsd-render-manifest" ]]; then
+  mv "$deck_dir/.hmsd-render-manifest" "$manifest"
+fi
 touch "$manifest"
 
 in_manifest() { grep -Fxq "$1" "$manifest"; }
