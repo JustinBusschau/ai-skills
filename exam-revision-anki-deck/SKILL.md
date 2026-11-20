@@ -52,9 +52,9 @@ Not allowed:
 
 ## Diagram cards from past papers
 
-Images are available in free Anki. Anki Desktop for Windows, macOS and Linux, AnkiWeb and AnkiDroid all support images in cards; the only paid official client is AnkiMobile for iPhone and iPad, and it supports images too. The constraint is the text import format, not the price.
+Images are available in free Anki. At the time of writing, Anki Desktop for Windows, macOS and Linux, AnkiWeb and AnkiDroid all support images in cards; the only paid official client is AnkiMobile for iPhone and iPad, and it supports images too. The constraint is the text import format, not the price.
 
-Use diagrams only from official BBKA past papers, and only where the parts are marked with letters such as A, B, C and so on. Do not use labelled diagrams, photographs, generic web images or AI-generated figures. Read `Revision-Image-Standard.md` in the study-plan repository first, keep the source file in the module's shared `images/` folder with a `_lettered` suffix, and add its provenance row.
+Use diagrams only from official BBKA past papers, and only where the parts are marked with letters such as A, B, C and so on. Do not use labelled diagrams, photographs, generic web images or AI-generated figures. Read `Revision-Image-Standard.md` in the study-plan repository before creating or editing any file that carries visual material, keep the source file in the module's shared `images/` folder with a `_lettered` suffix, and create the folder and `PROVENANCE.md` from the standard's template if they are missing before adding the provenance row.
 
 Each diagram card is still a single-point question:
 
@@ -62,7 +62,7 @@ Each diagram card is still a single-point question:
 - Back: one name, for example `Filament`. Never a list of A to K.
 - Use a separate card per letter where the whole figure is worth drilling. A diagram with parts A to K can yield up to eleven cards, each asking about one part.
 - Do not put the legend on the front. Put the names only on the backs, one per card, so the card tests recall rather than recognition of a key.
-- Keep the usual no-paper-reference rule: no paper dates, question numbers or mark allocations in the front or back. The `PastPaper` tag carries the provenance.
+- Keep the usual no-paper-reference rule: no paper dates, question numbers or mark allocations in the front or back. The `PastPaper` tag marks the provenance type; the exact paper and question stay in `images/PROVENANCE.md`.
 
 ## TSV format
 
@@ -83,7 +83,9 @@ The header lines are mandatory, because without them Anki ignores the file's str
 - `#html:false` keeps plain text as plain text for a deck with no images. A deck that carries any diagram card must change this line to `#html:true`, or Anki will print the `<img>` tag as text instead of showing the picture. Keep every other field free of angle brackets and ampersands when using `#html:true`.
 - `#separator:Tab` is the default, but stating it removes any doubt about what is separating the fields.
 
-Column 4 repeats the deck name on every row, which is what makes the deck get created. The deck name is `BBKA Module <n>`, one deck per module, so the user selects a module to study and filters within it by tag.
+These file headers require Anki 2.1.54 or later. Check the version where practical. If the user has an older Anki, say that the header lines will be treated as comments and give the manual import settings instead: tab separator, Allow HTML in fields on for a diagram deck, column 3 as tags, column 4 as deck, and the target deck name. Do not promise that Anki will create the deck automatically in that case.
+
+Column 4 repeats the deck name on every row, which is what makes the deck get created in Anki 2.1.54 and later. The deck name is `BBKA Module <n>`, one deck per module, so the user selects a module to study and filters within it by tag.
 
 Hard requirements, because breaking any of them corrupts the import:
 
@@ -91,7 +93,7 @@ Hard requirements, because breaking any of them corrupts the import:
 - **No tab characters inside any field.** Use commas or "or" for internal separation.
 - **No newlines inside any field.** Every card is a single line.
 - **No empty fields.**
-- **No CSV wrapping or surrounding quotes.** Quotes are allowed only inside the `<img src="...">` tag on diagram cards. Anki's TSV importer treats other quotes literally.
+- **No CSV wrapping or surrounding quotes.** Quotes are allowed only inside the `<img src="...">` tag on diagram cards. A field that begins with a quote can be parsed by Anki as a quoted field, so leaving all other fields unquoted keeps the import predictable.
 - **UTF-8, no byte order mark.**
 - **Plain text in the fields, apart from the `<img src="...">` tag on diagram cards.** Do not wrap scientific names in asterisks: Anki will not render markdown by default, so they will display as stray asterisks. Write `Varroa destructor` in plain text and tell the user, once, that italics can be restored by adding `em { font-style: italic; }` to their card template CSS.
 
@@ -111,17 +113,19 @@ Verify the result:
 
 ```bash
 grep -v '^#' deck.tsv | awk -F'\t' '{print NF}' | sort | uniq -c
+grep -v '^#' deck.tsv | awk -F'\t' 'NF != 4 || $1 == "" || $2 == "" || $3 == "" || $4 == "" { print NR ": " $0 }'
 grep -v '^#' deck.tsv | cut -f1 | sort | uniq -d
+head -c 3 deck.tsv | od -An -tx1
 ```
 
-Expect a single field count equal to four. Duplicate fronts are acceptable only where the front deliberately asks "Name one ..." and each duplicate has a different single-item answer; every other duplicate must be fixed. Report intentional duplicates in your reply.
+Expect a single field count equal to four, no output from the empty-field check, and a first three bytes that are not `ef bb bf`. If a diagram deck is being made, also confirm that `head -4 deck.tsv | grep '^#html:true$'` prints the header. Duplicate fronts are acceptable only where the front deliberately asks "Name one ..." and each duplicate has a different single-item answer; every other duplicate must be fixed. Report intentional duplicates in your reply.
 
 ### Media for diagram cards
 
 A text import does not carry the image files with it, so the media must be in place before the user imports the TSV.
 
 1. Copy every referenced `_lettered` file from the module's `images/` folder into the Anki profile's media folder, flat and with the exact filename. On macOS this is normally `~/Library/Application Support/Anki2/<profile>/collection.media/`. Do not create subfolders there.
-2. Confirm the header says `#html:true`, and that each Front field holds `<img src="filename.png">` with the plain filename only, never a path.
+2. Confirm that every referenced file exists in the module's `images/` folder and has a provenance row, that the header says `#html:true`, and that each Front field holds `<img src="filename.png">` with the plain filename only, never a path.
 3. If the user has confirmed the profile path, the skill may copy the files there on their behalf. Otherwise give them the path and the exact list of files. Never guess the profile name.
 4. After import, ask the user to run Tools, Check Media, and open a sample card. Report any missing files in the handback.
 
@@ -164,7 +168,7 @@ Where a module has been split into lettered blocks, use the recap's section lett
 In your reply, give the user:
 
 - The file path and the card count.
-- The deck name the cards will land in, and the fact that Anki creates it on import.
+- The deck name the cards will land in, and the fact that Anki 2.1.54 and later creates it on import, or the manual import settings if the user's Anki is older.
 - The tag breakdown, so they can see the coverage.
 - A note that Anki's "Allow HTML in fields" does not matter for a plain-text deck, since `#html:false` says so in the file, and that a deck with diagram cards uses `#html:true` instead.
 - If the deck contains diagram cards, the exact media files to place in `collection.media`, the profile path used or supplied, and the reminder to run Tools, Check Media after import.
@@ -182,15 +186,15 @@ British English, Oxford commas, no en dashes or em dashes, even inside card text
 - No list cards, no enumeration cards, no essay assembly cards, no numbered backs.
 - No card's front can be answered without producing the specific content.
 - No card's back is a paragraph of unrelated facts.
-- Exactly four tab separated fields on every line after the header lines, verified with `awk`.
-- The four import header lines are present, in order, with `#tags column:3` and `#deck column:4`.
-- Column 4 holds `BBKA Module <n>` on every row, so Anki creates the deck rather than dropping the cards into `Default`.
+- Exactly four tab separated fields on every line after the header lines, with no empty field, verified with `awk`.
+- The four import header lines are present, in order, with `#tags column:3` and `#deck column:4`, and Anki 2.1.54 or later has been confirmed or the manual-import fallback has been given.
+- Column 4 holds `BBKA Module <n>` on every row, so Anki 2.1.54 and later creates the deck rather than dropping the cards into `Default`.
 - Duplicate fronts are either absent or intentional "Name one" prompts with different single answers, verified with `cut` and `uniq -d`.
-- No tabs or newlines inside fields, no markdown asterisks, no BOM, and no quotes outside the `<img src="...">` tag on diagram cards.
+- No tabs or newlines inside fields, no markdown asterisks, no BOM verified with `od`, and no quotes outside the `<img src="...">` tag on diagram cards.
 - Every card tagged with module and topic block, exam-derived cards tagged `PastPaper`, time-sensitive cards tagged `Current_YYYY_MM_DD`.
 - No card text cites a paper, a sitting, a question number or a mark allocation.
 - Any diagram cards use official BBKA lettered past-paper figures, one letter per card, with one name on the back and no legend on the front.
-- A deck with diagram cards uses `#html:true`, and every referenced media file is copied flat into `collection.media` with the exact filename.
+- A deck with diagram cards uses `#html:true`, every referenced media file exists in the module's `images/` folder with a provenance row, and each one is copied flat into `collection.media` with the exact filename.
 - Where sources disagree, the BBKA answer is the one on the card.
 - Time-sensitive facts are described as current at a date, never as volatile or to re-check before the exam.
 - Card count is proportionate to the size of the syllabus section.

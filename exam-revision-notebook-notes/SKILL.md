@@ -94,7 +94,7 @@ The notes must contain no paper dates or sittings, question numbers, mark alloca
 
 ### 8. Include a relevant diagram where one exists
 
-Read `Revision-Image-Standard.md` in the study-plan repository before adding images. Use official BBKA or NBU sources only, and keep every image in the module's shared `images/` folder.
+Read `Revision-Image-Standard.md` in the study-plan repository before creating or editing any file that carries visual material. Use official BBKA or NBU sources only, keep every image in the module's shared `images/` folder, and create that folder and `PROVENANCE.md` from the standard's template if they are missing. Never substitute a web image or generate one.
 
 Where the item turns on something visual, include at least one diagram: bee or hive anatomy, mouthparts, legs, the apple blossom, a disease sign, a life cycle, a piece of equipment, or a seasonal calendar. Put it in section 1 immediately after the paragraph or table it illustrates, never in the cover-and-recall block.
 
@@ -107,7 +107,7 @@ Use a `_labelled` image where one exists. If the only official diagram has parts
 
 The legend is part of the note, so verify every name against the syllabus or an NBU source. Do not add paper dates, sittings or question numbers to the caption or alt text; record the source in `images/PROVENANCE.md` instead. If no official diagram is available, omit the image rather than substitute an unsourced one.
 
-Check that the file exists at the relative path and that the labels are legible before finishing.
+Check that the file exists at the relative path, that the labels are legible and that a provenance row exists before finishing.
 
 ### 9. Save the file
 
@@ -181,7 +181,7 @@ Do not check a fact against another file in the repository, because material dri
 - Every list of four or more items has a stated structure, and a mnemonic only where one genuinely works.
 - Values are bold and unambiguous, with no hyphens standing in for ranges: write "5 to 8", not "5-8".
 - A relevant official diagram is included where one exists, using a labelled image or a lettered image with a verified legend directly beneath it.
-- Every image path resolves from the module folder, the labels are legible, and the source is recorded in `images/PROVENANCE.md`.
+- Every image path resolves from the module folder, the labels are legible, and the source is recorded in `images/PROVENANCE.md`, creating that file from the standard's template if it was missing.
 - No paper dates, question numbers, mark allocations or exam-weighting language anywhere, including image captions and alt text.
 - No "why this is here" or similar preamble before any block.
 - British English, Oxford comma, scientific binomials italicised in markdown.

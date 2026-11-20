@@ -11,11 +11,12 @@ This is the fifth of five revision outputs. The others are `exam-revision-notebo
 
 ## Inputs and fixed choices
 
-- **A recap file is the normal input.** Read it in full. It is the source of truth: do not re-research the topic or add facts that are not in the recap. Notes may be read for wording but not used to expand the deck.
-- **A named topic with no recap.** Run `exam-revision-review` first to produce one, then build the deck from it.
+- **A recap file is the normal input.** Read it in full for coverage, currency, synthesis and discussion prompts, then read the matching `Mod<n>_Item_<x>_revision-notes.md` files for item teaching detail, as described below. Do not re-research the topic or add facts that are absent from both the recap and those revision-notes sheets.
+- **A named topic with no recap.** Run `exam-revision-review` first to produce one, and run `exam-revision-revision-notes` for any covered item that lacks a sheet, then build the deck from those outputs.
 - **Brand and layout are already decided for this skill:** the `personal` brand from `hmsd-marp-deck`, title slide yes, closing slide yes (used for discussion prompts), section separator slides no, location beside the recap, PDF and PNG check required. Do not ask the user to choose these again unless they explicitly ask for a different brand or layout.
+- **This skill overrides hmsd's Step 1 questions and Step 3 outline approval for revision decks.** The choices above are fixed, and the handback is the review point rather than an approval pause before writing slides.
 
-Read `~/.claude/skills/hmsd-marp-deck/SKILL.md` and `~/.claude/skills/hmsd-marp-deck/references/layouts.md` before writing slides, and follow their deck mechanics exactly. The personal brand is logo-free by design: no wordmark, no client logo, no invented emblem. Its shipped palette is honey amber and charcoal on warm cream with the footer "Study group". If the user asks for different colours or a footer, change the personal brand with `~/.claude/skills/hmsd-marp-deck/scripts/configure_personal_brand.py` before starting the deck, using the branding questions in that skill.
+Read `~/.claude/skills/hmsd-marp-deck/SKILL.md` and `~/.claude/skills/hmsd-marp-deck/references/layouts.md` before writing slides. Follow their layout, rendering and overflow mechanics, subject to the explicit override above. The personal brand is logo-free by design: no wordmark, no client logo, no invented emblem. Its shipped palette is honey amber and charcoal on warm cream with the footer "Study group". For a different footer in this deck only, change the deck's `--footer-label` value after `new_deck.sh`. `configure_personal_brand.py` rewrites the shared brand and affects future decks, so use it only when the user explicitly wants that global change or accepts the trade-off, and say so plainly before running it.
 
 ## Audience and depth
 
@@ -23,7 +24,7 @@ The recap is an individual's revision aid; the deck is a teaching aid for a grou
 
 Do not reproduce the revision-notes headings "Be certain", "Traps" or "Current at", and do not label anything as "what to focus on", "important to remember", "key recall", "know cold" or "Recall:". Turn the facts into teaching prose: a short lead that says what the item is about, then heading bullets that explain the rules, figures, exceptions and common corrections in connected sentences. Keep the figures, dates, legal references, named lists and units exactly as the revision notes give them. Omit anything marked unverified, not certain or still open.
 
-Depth now matters more than a strict 60-minute timing. A block may need more than one session; record that in the handback rather than cutting the item explanations to make the clock fit.
+Depth now matters more than a strict 60-minute timing. A block may need more than one session; record that in the handback rather than cutting the item explanations to make the clock fit. Do not stop for hmsd's outline approval step: the handback is the review point for this skill.
 
 ## What to put in the deck
 
@@ -42,15 +43,15 @@ Depth follows the source material: a dense block may need 20 or more slides, and
 
 ## Visual material
 
-Read `Revision-Image-Standard.md` in the study-plan repository before adding images. This is the one output where the user wants generous imagery: a relevant picture or diagram on most content slides is welcome, and a short video can be included where it explains something better than text. The user will review the deck and ask for items to be added, removed or swapped, so do not check every image or video with them first. List everything you add in the handback instead.
+Read `Revision-Image-Standard.md` in the study-plan repository before creating or editing any file that carries visual material, creating the module's `images/` folder and `PROVENANCE.md` from that standard's template if they are missing. This is the one output where the user wants generous imagery: a relevant picture or diagram on most content slides is welcome, and a short video can be included where it explains something better than text. The user will review the deck and ask for items to be added, removed or swapped, so do not check every image or video with them first. List everything you add in the handback instead.
 
 Sources, in order of preference:
 
 1. Official BBKA or NBU diagrams from the repository's past papers, syllabus, guidance and leaflets, or from bbka.org.uk and nationalbeeunit.com. Reuse the same files in the module's shared `images/` folder as the notes and recap.
 2. Official BBKA or NBU videos.
-3. Credible third-party equipment photographs, bee and plant images and videos where they genuinely help the audience and no official image exists. Give the source in the caption or a `.sources` block.
+3. Credible third-party equipment photographs, bee and plant images and videos where they genuinely help the audience and no official image exists. "Credible" means an identifiable publisher with subject expertise, not a generic image-search result. Before using one, confirm that its terms allow reuse for the intended study-group distribution; a visible credit is not a licence. Give the source in the caption or a `.sources` block. If reuse rights cannot be confirmed, leave the item out and say so in the handback.
 
-Never use AI-generated or unsourced examinable diagrams, and never let an image carry a fact that contradicts the revision-notes sheets or the recap. If a source cannot be verified, leave it out and say so in the handback. Keep paper dates, sittings and question numbers out of captions and alt text; record the source in `images/PROVENANCE.md`.
+Never use AI-generated or unsourced examinable diagrams, specimens, photographs of disease signs or videos, and never let an image carry a fact that contradicts the revision-notes sheets or the recap. If a source or its reuse rights cannot be verified, leave it out and say so in the handback. Keep paper dates, sittings and question numbers out of captions and alt text; record the source in `images/PROVENANCE.md`.
 
 **Images.** Use the existing `.fig` and `.cols` layouts. The deck sits beside the recap in the module folder, so the path into the shared image folder is the same as in the Markdown outputs:
 
@@ -85,7 +86,7 @@ Use `.fig short` for a wide image that must sit above bullets. Images count towa
 </div>
 ```
 
-A YouTube `<iframe>` can be used when the deck will be presented live in HTML, but PDF and PNG exports of an iframe are often blank. If you use one, keep the linked thumbnail on the slide immediately before it so the PDF still carries the material:
+A YouTube `<iframe>` can be used when the deck will be presented live in HTML, but PDF and PNG exports of an iframe are often blank. If you use one, keep the linked thumbnail on the same slide or the slide immediately before it so the PDF still carries the material:
 
 ```markdown
 <div class="fig">
@@ -127,20 +128,20 @@ For example, `Mod3_B_Invasive_Species_recap.md` produces `Mod3_B_Invasive_Specie
 - Slide count and the syllabus items covered.
 - Brand confirmation: personal, logo-free, honey and charcoal, footer "Study group".
 - A list of every image and video added, with its source and the slide it appears on, so the user can ask for swaps or removals.
-- The standard hmsd warning about sharing only the PDF, in the words used by that skill.
+- The hmsd sharing warning: "Only share the PDF. The HTML contains speaker notes and source paths, and its layout depends on the viewer's fonts; the PDF is the only fixed version."
 - Anything omitted from the recap because of space, and any slide that could not be checked.
 
 ## Quality checklist
 
 - Item detail comes from the matching revision-notes sheet; coverage, currency, synthesis and discussion come from the recap.
-- Personal brand applied through `new_deck.sh personal`; no logo assets beside the deck.
+- Personal brand applied through `new_deck.sh personal`; no logo assets beside the deck. Any palette or footer change was scoped to the deck, or the global effect of `configure_personal_brand.py` was disclosed first.
 - Title, map, one or more content slides per covered item, figures and dates, synthesis and discussion slides present where relevant.
 - Item explanations are closer to revision-notes length than to recap length, with heading bullets that carry connected teaching sentences.
 - No "what to focus on", "important to remember", "key recall", "know cold" or "Recall:" labels anywhere on slides.
 - Every callout is an unlabelled complete sentence drawn from the slide's own source material, with no repeated callout and no ellipsis.
 - Currency line reproduced where the recap has one, with no volatile framing.
-- Every image and video is either official BBKA or NBU material or a credited, credible source, with no unsourced examinable diagram.
-- Local image paths resolve from the module folder, video links carry a thumbnail fallback, and every image and video is listed in the handback.
+- Every image and video is official BBKA or NBU material, or comes from a credible source whose reuse rights were confirmed, with no generated or unsourced examinable diagram.
+- The module's `images/` folder and `PROVENANCE.md` exist, local image paths resolve from the module folder, video links carry a thumbnail fallback, and every image and video is listed in the handback.
 - No past-paper references or mark allocations.
 - Overflow check passed; previews inspected and then deleted.
 - British English, Oxford comma, no en dashes or em dashes.

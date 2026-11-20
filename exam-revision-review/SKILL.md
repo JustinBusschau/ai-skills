@@ -43,6 +43,8 @@ Ask for, in one message using the question tool where possible:
 
 If the user has already named a topic and asked for a full treatment, do not interrogate them further. Proceed to the recap, then offer or run the companion skills as requested.
 
+If the user names a past paper question, treat it as the seed for the block rather than as a paper walkthrough: identify the underlying syllabus item and block, then follow this workflow. The body of the recap still carries no paper references.
+
 ### 2. Read the source material
 
 Work from the repository. Do not rely on memory for the recap.
@@ -51,7 +53,7 @@ Work from the repository. Do not rely on memory for the recap.
 - **The item notes in the module folder.** These are the substance. The recap is built from them, so that the notes carry the explanation and the recap carries the recall.
 - **Past papers.** Extract every paper for the module in `Past Exams/MODULE n/` and work out what has been examined. **This is for your own preparation, not for the document.** It tells you which facts are safe, which phrasings the examiner prefers, and which self-test questions will be realistic. It does not appear in the recap, except in the evidence table at the end (see below).
 - **Reading list.** Check the current module reading list PDF (search the module's folder for a filename containing "Reading List") so the recap can point at the right textbook chapters.
-- **Diagrams.** Read `Revision-Image-Standard.md` in the study-plan repository, then check the module's shared `images/` folder and `images/PROVENANCE.md`. Extract any further official BBKA or NBU diagram the block needs into that folder, following the standard's naming and provenance rules. Image sources must be official BBKA or NBU material; never substitute a web image.
+- **Diagrams.** Read `Revision-Image-Standard.md` in the study-plan repository before creating or editing any file that carries visual material, then check the module's shared `images/` folder and `images/PROVENANCE.md`. Create either one from the standard's template if it is missing. Extract any further official BBKA or NBU diagram the block needs into that folder, following the standard's naming and provenance rules. Image sources must be official BBKA or NBU material; never substitute a web image or generate one.
 
 ### 3. Date the facts that move, and let the BBKA settle disagreements
 
@@ -115,7 +117,7 @@ The item notes carry the researched material; the recap carries the recall skele
 
 ### 4b. Add diagrams to the content and the self-test questions
 
-Images in the recap come from official BBKA or NBU sources and live in the module's shared `images/` folder. Follow `Revision-Image-Standard.md` for filenames, extraction and provenance.
+Images in the recap come from official BBKA or NBU sources and live in the module's shared `images/` folder. Follow `Revision-Image-Standard.md` for filenames, extraction and provenance, creating the folder and `PROVENANCE.md` from its template if they are missing.
 
 - **Content section:** use a `_labelled` image beside the table or list it supports. Where only a `_lettered` official figure exists, use that image and give the names in a legend immediately beneath it, for example `*A: anther, B: filament, C: petal.*`. The legend counts as content, so every name must already be supported by the item notes.
 - **Self-test questions:** use an unlabelled version of the same diagram. A `_lettered` figure with the names absent is the normal choice; a `_plain` figure works where the question asks for identification from appearance. Ask for one part or a set of parts, and put the legend in the model answer inside the `<details>` block:
@@ -152,7 +154,7 @@ Choosing the self-test questions **is** where knowledge of past papers earns its
 
 ### 6. Save the file
 
-Write to the module prep folder for the module in question, `Module Prep/Module 1/`, `2/`, `3/`, `5/`, `6/` or `7/`. Naming convention, which the user relies on to find these later:
+Write to the module prep folder for the module in question, `Module Prep/Module 1/`, `2/`, `3/`, `5/`, `6/`, `7/` or `8/`. Naming convention, which the user relies on to find these later:
 
 ```
 Mod<n>_<SectionLetter>_<Topic>_recap.md
@@ -180,7 +182,7 @@ British English throughout, including scientific and common names of organisms. 
 - Discriminators between similar species or diseases are in tables.
 - Self-test questions and model answers are present, in `<details>` blocks, with mark allocations.
 - Content diagrams are labelled, self-test diagrams are unlabelled, and any lettered legend appears in the answer to the self-test question.
-- Every image is an official BBKA or NBU source, its path resolves from the module folder, and it is recorded in `images/PROVENANCE.md`.
+- Every image is an official BBKA or NBU source, its path resolves from the module folder, and it is recorded in `images/PROVENANCE.md`, creating that file from the standard's template if it was missing.
 - A "Take away" section is present.
 - No paper dates, question numbers or exam-weighting language anywhere in the body.
 - No en dashes or em dashes anywhere in the file.

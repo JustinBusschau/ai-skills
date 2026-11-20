@@ -37,7 +37,7 @@ Never include cover-and-recall questions, a narrative, a volatile-facts section,
 
 ### 4. Add a labelled diagram where the item has one
 
-Read `Revision-Image-Standard.md` in the study-plan repository before adding images. Use official BBKA or NBU sources only, from the module's shared `images/` folder. A condensed sheet should carry at most one or two images, placed immediately after the bullet or block they support, so the sheet stays drillable.
+Read `Revision-Image-Standard.md` in the study-plan repository before creating or editing any file that carries visual material. Use official BBKA or NBU sources only, from the module's shared `images/` folder, creating that folder and `PROVENANCE.md` from the standard's template if they are missing. Never substitute a web image or generate one. A condensed sheet should carry at most one or two images, placed immediately after the bullet or block they support, so the sheet stays drillable.
 
 Prefer a `_labelled` image. Where the only official figure has parts marked A, B, C and so on, use the `_lettered` image and put the legend directly beneath it:
 
@@ -46,7 +46,7 @@ Prefer a `_labelled` image. Where the only official figure has parts marked A, B
 *A: labrum, B: mandible, C: maxilla.*
 ```
 
-Verify every legend name against the notes file and an official source. Keep captions free of paper dates, sittings and question numbers; record provenance in `images/PROVENANCE.md`. If the notes file has no diagram and no suitable official one exists, omit the image rather than sourcing one elsewhere.
+Verify every legend name against the notes file and an official source. Keep captions free of paper dates, sittings and question numbers; record provenance in `images/PROVENANCE.md`, creating it from the standard's template if missing. If the notes file has no diagram and no suitable official one exists, omit the image rather than sourcing or generating one elsewhere.
 
 ## Document template
 
@@ -62,7 +62,7 @@ Verify every legend name against the notes file and an official source. Keep cap
 
 ## Traps
 
-- **Trap:** <the wrong answer> → **Correct:** <the right answer, because <reason>>
+- **Trap:** <the wrong answer> → **Correct:** <the right answer>, because <reason>.
 
 ![<Diagram supporting this item>](images/Mod<n>_<Topic>_labelled.png)
 *<Short caption, or A: label, B: label when the source is lettered>*
@@ -90,7 +90,7 @@ British English, Oxford comma, scientific binomials italicised in markdown, valu
 - Every bullet is already supported by the notes file; nothing new has been introduced.
 - The Be certain block is short bullets, not prose, with values in bold.
 - Every trap gives the wrong answer, the right answer and the reason.
-- Any diagram is a labelled official image, or a lettered image with a verified legend directly beneath it, and its source is recorded in `images/PROVENANCE.md`.
+- Any diagram is a labelled official image, or a lettered image with a verified legend directly beneath it, and its source is recorded in `images/PROVENANCE.md`, creating that file from the standard's template if it was missing.
 - Every image path resolves from the module folder and the sheet stays short enough to drill.
 - Where sources disagree, the BBKA answer is taught as the answer.
 - Time-sensitive facts carry one `current at <date>` line, with no "volatile" or "re-check before the exam" wording.
