@@ -1,6 +1,6 @@
 ---
 name: exam-revision-notebook-notes
-description: Produce narrative, notebook-ready revision notes for one specific BBKA syllabus item, with a cover-and-recall block and tables or lists where exact recall matters. Use when the user names a syllabus item or a narrow exam topic to revise, for example "3.10 the statutory requirements and guidance relating to the Asian Hornet", "syllabus item 3.27", "revise 2.14 honey spoilage", or "notes on Nosema ceranae". Also use when the user asks for notebook notes, copyable bullets, something to write out by hand, mnemonics or memory tricks for a list, or narrative explanation of a single syllabus point. For the separate condensed recall sheet, use exam-revision-revision-notes instead.
+description: Produce narrative, notebook-ready revision notes for one specific BBKA syllabus item, with a cover-and-recall block, tables or lists where exact recall matters, and relevant labelled official diagrams. Use when the user names a syllabus item or a narrow exam topic to revise, for example "3.10 the statutory requirements and guidance relating to the Asian Hornet", "syllabus item 3.27", "revise 2.14 honey spoilage", or "notes on Nosema ceranae". Also use when the user asks for notebook notes, copyable bullets, something to write out by hand, mnemonics or memory tricks for a list, or narrative explanation of a single syllabus point. For the separate condensed recall sheet, use exam-revision-revision-notes instead.
 ---
 
 ## When to use
@@ -92,7 +92,24 @@ Where a claim cannot be settled even with this precedence rule, keep it and mark
 
 The notes must contain no paper dates or sittings, question numbers, mark allocations, "asked in" or "most examinable" framing, and no study-plan references. A fact taken from a past paper is still a fact: write it and leave the paper out. Section 1 must cover the whole syllabus item, including anything never examined.
 
-### 8. Save the file
+### 8. Include a relevant diagram where one exists
+
+Read `Revision-Image-Standard.md` in the study-plan repository before adding images. Use official BBKA or NBU sources only, and keep every image in the module's shared `images/` folder.
+
+Where the item turns on something visual, include at least one diagram: bee or hive anatomy, mouthparts, legs, the apple blossom, a disease sign, a life cycle, a piece of equipment, or a seasonal calendar. Put it in section 1 immediately after the paragraph or table it illustrates, never in the cover-and-recall block.
+
+Use a `_labelled` image where one exists. If the only official diagram has parts marked A, B, C and so on, use that `_lettered` image and put the legend directly beneath it, for example:
+
+```markdown
+![Apple blossom with parts marked](images/Mod1_Apple_Blossom_lettered.png)
+*A: anther, B: filament, C: petal.*
+```
+
+The legend is part of the note, so verify every name against the syllabus or an NBU source. Do not add paper dates, sittings or question numbers to the caption or alt text; record the source in `images/PROVENANCE.md` instead. If no official diagram is available, omit the image rather than substitute an unsourced one.
+
+Check that the file exists at the relative path and that the labels are legible before finishing.
+
+### 9. Save the file
 
 To the module prep folder for the module in question:
 
@@ -129,6 +146,9 @@ Answer these <three or four> cold, before you read anything below.
 
 1. <Numbered list, when the set or sequence has to be recalled exactly>
 2. 
+
+![<Diagram supporting this section>](images/Mod<n>_<Topic>_labelled.png)
+*<Short caption, or A: label, B: label when the source is lettered>*
 ```
 
 Nothing goes between the title and the cover-and-recall block: no exam evidence block, certainty target, verification line, provenance table or "my own hooks" section. The currency line follows the questions only where needed.
@@ -160,7 +180,9 @@ Do not check a fact against another file in the repository, because material dri
 - Where sources disagree, the BBKA answer is taught as the answer.
 - Every list of four or more items has a stated structure, and a mnemonic only where one genuinely works.
 - Values are bold and unambiguous, with no hyphens standing in for ranges: write "5 to 8", not "5-8".
-- No paper dates, question numbers, mark allocations or exam-weighting language anywhere.
+- A relevant official diagram is included where one exists, using a labelled image or a lettered image with a verified legend directly beneath it.
+- Every image path resolves from the module folder, the labels are legible, and the source is recorded in `images/PROVENANCE.md`.
+- No paper dates, question numbers, mark allocations or exam-weighting language anywhere, including image captions and alt text.
 - No "why this is here" or similar preamble before any block.
 - British English, Oxford comma, scientific binomials italicised in markdown.
 - No en dashes or em dashes anywhere.

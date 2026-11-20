@@ -1,6 +1,6 @@
 ---
 name: exam-revision-review
-description: Build a syllabus-mapped revision recap with a self-testing Q&A for a BBKA written examination module or a named section of one, saved as a markdown file the user can return to. Use when the user asks to revise, recap, review or prepare for a BBKA Module 1, 2, 3 or other exam sitting, asks for a revision session, study recap, topic summary, Q&A to test comprehension, or asks to cover a particular section such as foulbrood, varroa, invasive species, honey constituents, forage, pollination, honey granulation, beeswax, poisoning or legislation. Also use when the user names a study block, a week of the study plan, or a past paper question they want covered. For per-item narrative notes use exam-revision-notebook-notes; for the condensed recall sheet use exam-revision-revision-notes.
+description: Build a syllabus-mapped revision recap with a self-testing Q&A for a BBKA written examination module or a named section of one, saved as a markdown file the user can return to, with labelled diagrams in the content and unlabelled diagrams in the self-test questions. Use when the user asks to revise, recap, review or prepare for a BBKA Module 1, 2, 3 or other exam sitting, asks for a revision session, study recap, topic summary, Q&A to test comprehension, or asks to cover a particular section such as foulbrood, varroa, invasive species, honey constituents, forage, pollination, honey granulation, beeswax, poisoning or legislation. Also use when the user names a study block, a week of the study plan, or a past paper question they want covered. For per-item narrative notes use exam-revision-notebook-notes; for the condensed recall sheet use exam-revision-revision-notes.
 ---
 
 ## When to use
@@ -51,6 +51,7 @@ Work from the repository. Do not rely on memory for the recap.
 - **The item notes in the module folder.** These are the substance. The recap is built from them, so that the notes carry the explanation and the recap carries the recall.
 - **Past papers.** Extract every paper for the module in `Past Exams/MODULE n/` and work out what has been examined. **This is for your own preparation, not for the document.** It tells you which facts are safe, which phrasings the examiner prefers, and which self-test questions will be realistic. It does not appear in the recap, except in the evidence table at the end (see below).
 - **Reading list.** Check the current module reading list PDF (search the module's folder for a filename containing "Reading List") so the recap can point at the right textbook chapters.
+- **Diagrams.** Read `Revision-Image-Standard.md` in the study-plan repository, then check the module's shared `images/` folder and `images/PROVENANCE.md`. Extract any further official BBKA or NBU diagram the block needs into that folder, following the standard's naming and provenance rules. Image sources must be official BBKA or NBU material; never substitute a web image.
 
 ### 3. Date the facts that move, and let the BBKA settle disagreements
 
@@ -112,6 +113,28 @@ The item notes carry the researched material; the recap carries the recall skele
   information database for authorised medicines, and the National Honey Show's current
   schedule for show specifications.
 
+### 4b. Add diagrams to the content and the self-test questions
+
+Images in the recap come from official BBKA or NBU sources and live in the module's shared `images/` folder. Follow `Revision-Image-Standard.md` for filenames, extraction and provenance.
+
+- **Content section:** use a `_labelled` image beside the table or list it supports. Where only a `_lettered` official figure exists, use that image and give the names in a legend immediately beneath it, for example `*A: anther, B: filament, C: petal.*`. The legend counts as content, so every name must already be supported by the item notes.
+- **Self-test questions:** use an unlabelled version of the same diagram. A `_lettered` figure with the names absent is the normal choice; a `_plain` figure works where the question asks for identification from appearance. Ask for one part or a set of parts, and put the legend in the model answer inside the `<details>` block:
+
+  ```
+  ![Apple blossom with parts marked](images/Mod1_Apple_Blossom_lettered.png)
+
+  Identify the structures marked A to C. (3 marks)
+
+  <details>
+  <summary>Answer</summary>
+
+  A: anther, B: filament, C: petal.
+  </details>
+  ```
+
+- Keep mark allocations on self-test questions, but keep paper dates, sittings and question numbers out of the question, the caption, the alt text and the answer. Provenance belongs in `images/PROVENANCE.md`.
+- Do not place an image in the syllabus coverage table, the cover-and-recall block or the past paper evidence table. Check that each path resolves from the module folder and that the labels are legible at the size shown.
+
 ### 5. Never refer to past exam questions in the body of the recap
 
 The body of the recap must contain:
@@ -156,6 +179,8 @@ British English throughout, including scientific and common names of organisms. 
 - Numbers appear in bold.
 - Discriminators between similar species or diseases are in tables.
 - Self-test questions and model answers are present, in `<details>` blocks, with mark allocations.
+- Content diagrams are labelled, self-test diagrams are unlabelled, and any lettered legend appears in the answer to the self-test question.
+- Every image is an official BBKA or NBU source, its path resolves from the module folder, and it is recorded in `images/PROVENANCE.md`.
 - A "Take away" section is present.
 - No paper dates, question numbers or exam-weighting language anywhere in the body.
 - No en dashes or em dashes anywhere in the file.

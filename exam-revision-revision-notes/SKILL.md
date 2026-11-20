@@ -1,6 +1,6 @@
 ---
 name: exam-revision-revision-notes
-description: Turn the narrative notes for one BBKA syllabus item into a short revision sheet of facts to know cold and the traps that lose marks. Use when the user wants a condensed recall sheet, a "be 100% sure" list, a list of traps or wrong answers, or revision material to use after the narrative notes are understood, for example "revision sheet for 3.10", "traps for item 2.14", or "turn this notes file into a final recall sheet". Use alongside exam-revision-notebook-notes, exam-revision-review, exam-revision-anki-deck and exam-revision-marp-deck.
+description: Turn the narrative notes for one BBKA syllabus item into a short revision sheet of facts to know cold and the traps that lose marks, with compact labelled official diagrams where relevant. Use when the user wants a condensed recall sheet, a "be 100% sure" list, a list of traps or wrong answers, or revision material to use after the narrative notes are understood, for example "revision sheet for 3.10", "traps for item 2.14", or "turn this notes file into a final recall sheet". Use alongside exam-revision-notebook-notes, exam-revision-review, exam-revision-anki-deck and exam-revision-marp-deck.
 ---
 
 ## When to use
@@ -35,6 +35,19 @@ Time-sensitive facts are current at the date you write the sheet, not "volatile"
 
 Never include cover-and-recall questions, a narrative, a volatile-facts section, past-paper references, mark allocations, "most examinable" framing, or any scaffolding that talks about the scaffolding.
 
+### 4. Add a labelled diagram where the item has one
+
+Read `Revision-Image-Standard.md` in the study-plan repository before adding images. Use official BBKA or NBU sources only, from the module's shared `images/` folder. A condensed sheet should carry at most one or two images, placed immediately after the bullet or block they support, so the sheet stays drillable.
+
+Prefer a `_labelled` image. Where the only official figure has parts marked A, B, C and so on, use the `_lettered` image and put the legend directly beneath it:
+
+```markdown
+![Honey bee mouthparts with parts marked](images/Mod1_Bee_Mouthparts_lettered.png)
+*A: labrum, B: mandible, C: maxilla.*
+```
+
+Verify every legend name against the notes file and an official source. Keep captions free of paper dates, sittings and question numbers; record provenance in `images/PROVENANCE.md`. If the notes file has no diagram and no suitable official one exists, omit the image rather than sourcing one elsewhere.
+
 ## Document template
 
 ```markdown
@@ -50,6 +63,9 @@ Never include cover-and-recall questions, a narrative, a volatile-facts section,
 ## Traps
 
 - **Trap:** <the wrong answer> → **Correct:** <the right answer, because <reason>>
+
+![<Diagram supporting this item>](images/Mod<n>_<Topic>_labelled.png)
+*<Short caption, or A: label, B: label when the source is lettered>*
 ```
 
 Use the same full syllabus title as the notes file, verified against the module syllabus PDF. Omit the currency line where there are no time-sensitive facts. Adapt the number of bullets to the item; a narrow item may need only three or four, a broad one twenty or more.
@@ -74,6 +90,8 @@ British English, Oxford comma, scientific binomials italicised in markdown, valu
 - Every bullet is already supported by the notes file; nothing new has been introduced.
 - The Be certain block is short bullets, not prose, with values in bold.
 - Every trap gives the wrong answer, the right answer and the reason.
+- Any diagram is a labelled official image, or a lettered image with a verified legend directly beneath it, and its source is recorded in `images/PROVENANCE.md`.
+- Every image path resolves from the module folder and the sheet stays short enough to drill.
 - Where sources disagree, the BBKA answer is taught as the answer.
 - Time-sensitive facts carry one `current at <date>` line, with no "volatile" or "re-check before the exam" wording.
 - No narrative, no cover-and-recall questions, no volatile-facts section.

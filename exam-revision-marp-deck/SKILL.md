@@ -1,6 +1,6 @@
 ---
 name: exam-revision-marp-deck
-description: Build a personal-branded Marp deck from a BBKA revision recap, for a study group where each participant owns a different section and presents it. Use when asked for slides, a presentation, a talk, a study-group deck or a walkthrough of a BBKA module block such as Mod3_B_Invasive_Species_recap.md, or when asked to cover the most important areas of a recap in slide form. Uses the hmsd-marp-deck skill with its logo-free personal brand.
+description: Build a personal-branded Marp deck from a BBKA revision recap, for a study group where each participant owns a different section and presents it, with generous use of relevant images, diagrams and embeddable video. Use when asked for slides, a presentation, a talk, a study-group deck or a walkthrough of a BBKA module block such as Mod3_B_Invasive_Species_recap.md, or when asked to cover the most important areas of a recap in slide form. Uses the hmsd-marp-deck skill with its logo-free personal brand.
 ---
 
 ## When to use
@@ -40,6 +40,65 @@ Use this shape, adapting counts to the size of the block:
 
 Depth follows the source material: a dense block may need 20 or more slides, and that is acceptable. Check every slide for overflow with `render.sh --png --pdf` and split any slide that fails.
 
+## Visual material
+
+Read `Revision-Image-Standard.md` in the study-plan repository before adding images. This is the one output where the user wants generous imagery: a relevant picture or diagram on most content slides is welcome, and a short video can be included where it explains something better than text. The user will review the deck and ask for items to be added, removed or swapped, so do not check every image or video with them first. List everything you add in the handback instead.
+
+Sources, in order of preference:
+
+1. Official BBKA or NBU diagrams from the repository's past papers, syllabus, guidance and leaflets, or from bbka.org.uk and nationalbeeunit.com. Reuse the same files in the module's shared `images/` folder as the notes and recap.
+2. Official BBKA or NBU videos.
+3. Credible third-party equipment photographs, bee and plant images and videos where they genuinely help the audience and no official image exists. Give the source in the caption or a `.sources` block.
+
+Never use AI-generated or unsourced examinable diagrams, and never let an image carry a fact that contradicts the revision-notes sheets or the recap. If a source cannot be verified, leave it out and say so in the handback. Keep paper dates, sittings and question numbers out of captions and alt text; record the source in `images/PROVENANCE.md`.
+
+**Images.** Use the existing `.fig` and `.cols` layouts. The deck sits beside the recap in the module folder, so the path into the shared image folder is the same as in the Markdown outputs:
+
+```markdown
+<div class="cols left-narrow">
+<div class="fig">
+
+<img src="images/Mod3_Bee_Anatomy_labelled.png" alt="Labelled external anatomy of a worker honey bee">
+
+<div class="caption">External anatomy of a worker bee.</div>
+
+</div>
+<div>
+
+- **Heading**<br>One or two teaching sentences.
+
+</div>
+</div>
+```
+
+Use `.fig short` for a wide image that must sit above bullets. Images count towards slide height, so split the slide rather than shrinking type. Check the rendered previews for legibility, for a missing image and for overlap with the footer.
+
+**Video.** A linked thumbnail is the reliable pattern because it works in both the HTML and PDF exports. `render.sh` passes `--html` and `--allow-local-files`, so raw HTML links to local files and to YouTube both work:
+
+```markdown
+<div class="fig">
+
+<a href="https://www.youtube.com/watch?v=VIDEO_ID"><img src="images/Mod3_Video_Thumb.jpg" alt="Short description of what the video shows"></a>
+
+<div class="caption">Watch: [video title], [publisher]. https://www.youtube.com/watch?v=VIDEO_ID</div>
+
+</div>
+```
+
+A YouTube `<iframe>` can be used when the deck will be presented live in HTML, but PDF and PNG exports of an iframe are often blank. If you use one, keep the linked thumbnail on the slide immediately before it so the PDF still carries the material:
+
+```markdown
+<div class="fig">
+
+<iframe width="640" height="360" src="https://www.youtube-nocookie.com/embed/VIDEO_ID" title="Video title" frameborder="0" allowfullscreen></iframe>
+
+<div class="caption">Watch: [video title], [publisher]. https://www.youtube.com/watch?v=VIDEO_ID</div>
+
+</div>
+```
+
+Prefer official BBKA or NBU videos. Keep each clip short and state in the speaker notes what the audience should notice while watching.
+
 ### Callout boxes
 
 A `.note` callout summarises the slide it sits on, not the block as a whole. Take the wording from that item's own revision-notes material or from the recap section for the shared slides, and write it as a plain sentence with no `**Recall:**` or similar label. Never copy the recap's single "Take away" item onto several slides, and never repeat a callout across consecutive slides. Each callout must be one complete sentence, under about 180 characters, with no ellipsis. If a draft has to be cut, choose a shorter sentence from the same source rather than truncating a long one. The figures slide can have its own short callout about units, and the discussion slide uses a presenter tip.
@@ -67,6 +126,7 @@ For example, `Mod3_B_Invasive_Species_recap.md` produces `Mod3_B_Invasive_Specie
 - Deck, HTML and PDF paths.
 - Slide count and the syllabus items covered.
 - Brand confirmation: personal, logo-free, honey and charcoal, footer "Study group".
+- A list of every image and video added, with its source and the slide it appears on, so the user can ask for swaps or removals.
 - The standard hmsd warning about sharing only the PDF, in the words used by that skill.
 - Anything omitted from the recap because of space, and any slide that could not be checked.
 
@@ -79,6 +139,8 @@ For example, `Mod3_B_Invasive_Species_recap.md` produces `Mod3_B_Invasive_Specie
 - No "what to focus on", "important to remember", "key recall", "know cold" or "Recall:" labels anywhere on slides.
 - Every callout is an unlabelled complete sentence drawn from the slide's own source material, with no repeated callout and no ellipsis.
 - Currency line reproduced where the recap has one, with no volatile framing.
+- Every image and video is either official BBKA or NBU material or a credited, credible source, with no unsourced examinable diagram.
+- Local image paths resolve from the module folder, video links carry a thumbnail fallback, and every image and video is listed in the handback.
 - No past-paper references or mark allocations.
 - Overflow check passed; previews inspected and then deleted.
 - British English, Oxford comma, no en dashes or em dashes.
